@@ -647,31 +647,49 @@ func LD_0x7F_A_A(CPU *CPU, MMU *MMU) {
 // 0x80 ADD A_B
 func ADD_0x80_A_B(CPU *CPU, MMU *MMU) {
 	log.Println("0x80 ADD A_B")
+	CPU._r.A += CPU._r.B
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x81 ADD A_C
 func ADD_0x81_A_C(CPU *CPU, MMU *MMU) {
 	log.Println("0x81 ADD A_C")
+	CPU._r.A += CPU._r.C
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x82 ADD A_D
 func ADD_0x82_A_D(CPU *CPU, MMU *MMU) {
 	log.Println("0x82 ADD A_D")
+	CPU._r.A += CPU._r.D
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x83 ADD A_E
 func ADD_0x83_A_E(CPU *CPU, MMU *MMU) {
 	log.Println("0x83 ADD A_E")
+	CPU._r.A += CPU._r.E
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x84 ADD A_H
 func ADD_0x84_A_H(CPU *CPU, MMU *MMU) {
 	log.Println("0x84 ADD A_H")
+	CPU._r.A += CPU._r.H
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x85 ADD A_L
 func ADD_0x85_A_L(CPU *CPU, MMU *MMU) {
 	log.Println("0x85 ADD A_L")
+	CPU._r.A += CPU._r.L
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x86 ADD A_HL
@@ -682,6 +700,9 @@ func ADD_0x86_A_HL(CPU *CPU, MMU *MMU) {
 // 0x87 ADD A_A
 func ADD_0x87_A_A(CPU *CPU, MMU *MMU) {
 	log.Println("0x87 ADD A_A")
+	CPU._r.A += CPU._r.A
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x88 ADC A_B
