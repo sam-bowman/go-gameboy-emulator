@@ -48,6 +48,7 @@ func (g *Game) Update() error {
 	if g.MMU._inbios && g.CPU._r.PC == 0x0100 {
 		g.MMU._inbios = false
 	}
+	log.Println(g.CPU._r)
 	return nil
 }
 

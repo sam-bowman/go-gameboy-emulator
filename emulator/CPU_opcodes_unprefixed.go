@@ -27,11 +27,17 @@ func INC_0x03_BC(CPU *CPU, MMU *MMU) {
 // 0x04 INC B
 func INC_0x04_B(CPU *CPU, MMU *MMU) {
 	log.Println("0x04 INC B")
+	CPU._r.B++
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x05 DEC B
 func DEC_0x05_B(CPU *CPU, MMU *MMU) {
 	log.Println("0x05 DEC B")
+	CPU._r.B--
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x06 LD B_n8
@@ -67,11 +73,17 @@ func DEC_0x0B_BC(CPU *CPU, MMU *MMU) {
 // 0x0C INC C
 func INC_0x0C_C(CPU *CPU, MMU *MMU) {
 	log.Println("0x0C INC C")
+	CPU._r.C++
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x0D DEC C
 func DEC_0x0D_C(CPU *CPU, MMU *MMU) {
 	log.Println("0x0D DEC C")
+	CPU._r.C--
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x0E LD C_n8
@@ -107,11 +119,17 @@ func INC_0x13_DE(CPU *CPU, MMU *MMU) {
 // 0x14 INC D
 func INC_0x14_D(CPU *CPU, MMU *MMU) {
 	log.Println("0x14 INC D")
+	CPU._r.D++
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x15 DEC D
 func DEC_0x15_D(CPU *CPU, MMU *MMU) {
 	log.Println("0x15 DEC D")
+	CPU._r.D--
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x16 LD D_n8
@@ -147,11 +165,17 @@ func DEC_0x1B_DE(CPU *CPU, MMU *MMU) {
 // 0x1C INC E
 func INC_0x1C_E(CPU *CPU, MMU *MMU) {
 	log.Println("0x1C INC E")
+	CPU._r.E++
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x1D DEC E
 func DEC_0x1D_E(CPU *CPU, MMU *MMU) {
 	log.Println("0x1D DEC E")
+	CPU._r.E--
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x1E LD E_n8
@@ -187,11 +211,17 @@ func INC_0x23_HL(CPU *CPU, MMU *MMU) {
 // 0x24 INC H
 func INC_0x24_H(CPU *CPU, MMU *MMU) {
 	log.Println("0x24 INC H")
+	CPU._r.H++
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x25 DEC H
 func DEC_0x25_H(CPU *CPU, MMU *MMU) {
 	log.Println("0x25 DEC H")
+	CPU._r.H--
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x26 LD H_n8
@@ -227,11 +257,17 @@ func DEC_0x2B_HL(CPU *CPU, MMU *MMU) {
 // 0x2C INC L
 func INC_0x2C_L(CPU *CPU, MMU *MMU) {
 	log.Println("0x2C INC L")
+	CPU._r.L++
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x2D DEC L
 func DEC_0x2D_L(CPU *CPU, MMU *MMU) {
 	log.Println("0x2D DEC L")
+	CPU._r.L--
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x2E LD L_n8
@@ -307,11 +343,17 @@ func DEC_0x3B_SP(CPU *CPU, MMU *MMU) {
 // 0x3C INC A
 func INC_0x3C_A(CPU *CPU, MMU *MMU) {
 	log.Println("0x3C INC A")
+	CPU._r.A++
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x3D DEC A
 func DEC_0x3D_A(CPU *CPU, MMU *MMU) {
 	log.Println("0x3D DEC A")
+	CPU._r.A--
+	CPU._r.M = 1
+	CPU._r.T = 4
 }
 
 // 0x3E LD A_n8
