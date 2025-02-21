@@ -69,7 +69,7 @@ func main() {
 	game.MMU = newMMU()
 
 	// Load ROM
-	gameboy_game := "pokemon-fire-red.gb"
+	gameboy_game := "../roms-for-testing/pokemon-fire-red.gb"
 	rom := RetrieveROM(gameboy_game)
 	game.MMU._rom = rom
 
