@@ -532,31 +532,41 @@ type CPU struct {
 	_r REGISTER
 	_c CLOCK
 
-	reset func(CPU *CPU)
+	reset func(GB *GAMEBOY)
+	exec func(GB *GAMEBOY)
 
 	_ops   OPS
 	_map   [256]func(GB *GAMEBOY)
 	_cbmap [256]func(GB *GAMEBOY)
 }
 
-func reset(CPU *CPU) {
+func exec(GB *GAMEBOY) {
+	// Fetch the next opcode
+	opcode := GB.MMU._rom[GB.CPU._r.PC]
+
+	// Execute the opcode
+	GB.CPU._map[opcode](GB)
+}
+
+
+func reset(GB *GAMEBOY) {
 	// Reset Registers
-	CPU._r.A = 0
-	CPU._r.B = 0
-	CPU._r.C = 0
-	CPU._r.D = 0
-	CPU._r.E = 0
-	CPU._r.H = 0
-	CPU._r.L = 0
-	CPU._r.F = 0
-	CPU._r.PC = 0
-	CPU._r.SP = 0
-	CPU._r.M = 0
-	CPU._r.T = 0
+	GB.CPU._r.A = 0
+	GB.CPU._r.B = 0
+	GB.CPU._r.C = 0
+	GB.CPU._r.D = 0
+	GB.CPU._r.E = 0
+	GB.CPU._r.H = 0
+	GB.CPU._r.L = 0
+	GB.CPU._r.F = 0
+	GB.CPU._r.PC = 0
+	GB.CPU._r.SP = 0
+	GB.CPU._r.M = 0
+	GB.CPU._r.T = 0
 
 	// Reset Clock
-	CPU._c.M = 0
-	CPU._c.T = 0
+	GB.CPU._c.M = 0
+	GB.CPU._c.T = 0
 }
 
 func newCPU() *CPU {
@@ -583,6 +593,7 @@ func newCPU() *CPU {
 	}
 
 	CPU.reset = reset
+	CPU.exec = exec
 
 	// Assign Unprefixed functions and map them.
 	CPU._ops.NOP_0x00 = NOP_0x00
