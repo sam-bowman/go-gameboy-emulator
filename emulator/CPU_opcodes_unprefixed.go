@@ -13,8 +13,7 @@ import "log"
 
 // 0x00 NOP
 func NOP_0x00(GB *GAMEBOY) {
-	log.Println("0x00 NOP ")
-	//NEEDS CODE
+	log.Println("0x00 NOP")
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -24,7 +23,8 @@ func NOP_0x00(GB *GAMEBOY) {
 // 0x01 LD BC_n16
 func LD_0x01_BC_n16(GB *GAMEBOY) {
 	log.Println("0x01 LD BC_n16")
-	//NEEDS CODE
+	GB.CPU._r.B = GB.MMU._rom[GB.CPU._r.PC+2]
+	GB.CPU._r.C = GB.MMU._rom[GB.CPU._r.PC+1]
 	GB.CPU._r.PC += 3
 	GB.CPU._r.M = 3
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -44,7 +44,10 @@ func LD_0x02_addrBC_A(GB *GAMEBOY) {
 // 0x03 INC BC
 func INC_0x03_BC(GB *GAMEBOY) {
 	log.Println("0x03 INC BC")
-	//NEEDS CODE
+	combined := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
+	combined += 1
+	GB.CPU._r.B = byte(combined >> 8)
+	GB.CPU._r.C = byte(combined & 0xFF)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -54,7 +57,7 @@ func INC_0x03_BC(GB *GAMEBOY) {
 // 0x04 INC B
 func INC_0x04_B(GB *GAMEBOY) {
 	log.Println("0x04 INC B")
-	//NEEDS CODE
+	GB.CPU._r.B += 1
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -64,7 +67,7 @@ func INC_0x04_B(GB *GAMEBOY) {
 // 0x05 DEC B
 func DEC_0x05_B(GB *GAMEBOY) {
 	log.Println("0x05 DEC B")
-	//NEEDS CODE
+	GB.CPU._r.B -= 1
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -74,7 +77,7 @@ func DEC_0x05_B(GB *GAMEBOY) {
 // 0x06 LD B_n8
 func LD_0x06_B_n8(GB *GAMEBOY) {
 	log.Println("0x06 LD B_n8")
-	//NEEDS CODE
+	GB.CPU._r.B = GB.MMU._rom[GB.CPU._r.PC+1]
 	GB.CPU._r.PC += 2
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -104,7 +107,12 @@ func LD_0x08_addra16_SP(GB *GAMEBOY) {
 // 0x09 ADD HL_BC
 func ADD_0x09_HL_BC(GB *GAMEBOY) {
 	log.Println("0x09 ADD HL_BC")
-	//NEEDS CODE
+	combinedHL := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
+	combinedBC := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
+	combinedHL = combinedHL + combinedBC
+	GB.CPU._r.H = byte(combinedHL >> 8)
+	GB.CPU._r.L = byte(combinedHL & 0xFF)
+	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
