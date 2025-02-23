@@ -5,9 +5,23 @@ type CLOCK struct {
 }
 
 type REGISTER struct {
-	A, B, C, D, E, H, L, F uint8
-	PC, SP                 uint16
-	M, T                   uint8
+	A uint8 //Accumulator
+	F uint8 //Flags
+	//ZNHC0000
+	//Z = Zero Flag
+	//N = Subtract Flag
+	//H = Half Carry Flag
+	//C = Carry Flag
+	//0 = Never used, always 0.
+
+	B, C uint8
+	D, E uint8
+	H, L uint8
+
+	SP uint16 // Stack Pointer
+	PC uint16 //Program Counter
+
+	M, T uint8
 }
 
 type OPS struct {
@@ -533,7 +547,7 @@ type CPU struct {
 	_c CLOCK
 
 	reset func(GB *GAMEBOY)
-	exec func(GB *GAMEBOY)
+	exec  func(GB *GAMEBOY)
 
 	_ops   OPS
 	_map   [256]func(GB *GAMEBOY)
@@ -547,7 +561,6 @@ func exec(GB *GAMEBOY) {
 	// Execute the opcode
 	GB.CPU._map[opcode](GB)
 }
-
 
 func reset(GB *GAMEBOY) {
 	// Reset Registers
