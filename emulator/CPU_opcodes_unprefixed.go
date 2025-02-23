@@ -13,7 +13,10 @@ func NOP_0x00(GB *GAMEBOY) {
 // 0x01 LD BC_n16
 func LD_0x01_BC_n16(GB *GAMEBOY) {
 	log.Println("0x01 LD BC_n16")
-	//NEEDS CODE
+	lower := GB.MMU._rom[GB.CPU._r.PC+1]
+	upper := GB.MMU._rom[GB.CPU._r.PC+2]
+	GB.CPU._r.B = upper
+	GB.CPU._r.C = lower
 	GB.CPU._r.PC += 3
 	GB.CPU._r.M = 3
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -23,6 +26,7 @@ func LD_0x01_BC_n16(GB *GAMEBOY) {
 func LD_0x02_BC_A(GB *GAMEBOY) {
 	log.Println("0x02 LD BC_A")
 	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF BC
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -31,7 +35,10 @@ func LD_0x02_BC_A(GB *GAMEBOY) {
 // 0x03 INC BC
 func INC_0x03_BC(GB *GAMEBOY) {
 	log.Println("0x03 INC BC")
-	//NEEDS CODE
+	combined := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.B)
+	combined += 1
+	GB.CPU._r.B = byte(combined >> 8)
+	GB.CPU._r.C = byte(combined & 0xFF)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -77,6 +84,7 @@ func RLCA_0x07(GB *GAMEBOY) {
 func LD_0x08_a16_SP(GB *GAMEBOY) {
 	log.Println("0x08 LD a16_SP")
 	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF a16
 	GB.CPU._r.PC += 3
 	GB.CPU._r.M = 5
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -95,6 +103,7 @@ func ADD_0x09_HL_BC(GB *GAMEBOY) {
 func LD_0x0A_A_BC(GB *GAMEBOY) {
 	log.Println("0x0A LD A_BC")
 	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF BC
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -157,7 +166,10 @@ func STOP_0x10_n8(GB *GAMEBOY) {
 // 0x11 LD DE_n16
 func LD_0x11_DE_n16(GB *GAMEBOY) {
 	log.Println("0x11 LD DE_n16")
-	//NEEDS CODE
+	lower := GB.MMU._rom[GB.CPU._r.PC+1]
+	upper := GB.MMU._rom[GB.CPU._r.PC+2]
+	GB.CPU._r.D = upper
+	GB.CPU._r.E = lower
 	GB.CPU._r.PC += 3
 	GB.CPU._r.M = 3
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -167,6 +179,7 @@ func LD_0x11_DE_n16(GB *GAMEBOY) {
 func LD_0x12_DE_A(GB *GAMEBOY) {
 	log.Println("0x12 LD DE_A")
 	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF DE
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -239,6 +252,7 @@ func ADD_0x19_HL_DE(GB *GAMEBOY) {
 func LD_0x1A_A_DE(GB *GAMEBOY) {
 	log.Println("0x1A LD A_DE")
 	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF DE
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -292,21 +306,41 @@ func RRA_0x1F(GB *GAMEBOY) {
 // 0x20 JR NZ_e8
 func JR_0x20_NZ_e8(GB *GAMEBOY) {
 	log.Println("0x20 JR NZ_e8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 3 // 3 if Z flag is not set, 2 if set
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x21 LD HL_n16
 func LD_0x21_HL_n16(GB *GAMEBOY) {
 	log.Println("0x21 LD HL_n16")
+	lower := GB.MMU._rom[GB.CPU._r.PC+1]
+	upper := GB.MMU._rom[GB.CPU._r.PC+2]
+	GB.CPU._r.H = upper
+	GB.CPU._r.L = lower
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x22 LD HL_A
 func LD_0x22_HL_A(GB *GAMEBOY) {
 	log.Println("0x22 LD HL_A")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x23 INC HL
 func INC_0x23_HL(GB *GAMEBOY) {
 	log.Println("0x23 INC HL")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x24 INC H
@@ -339,26 +373,47 @@ func LD_0x26_H_n8(GB *GAMEBOY) {
 // 0x27 DAA
 func DAA_0x27(GB *GAMEBOY) {
 	log.Println("0x27 DAA ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x28 JR Z_e8
 func JR_0x28_Z_e8(GB *GAMEBOY) {
 	log.Println("0x28 JR Z_e8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 3 // 3 if Z flag is set, 2 if not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x29 ADD HL_HL
 func ADD_0x29_HL_HL(GB *GAMEBOY) {
 	log.Println("0x29 ADD HL_HL")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x2A LD A_HL
 func LD_0x2A_A_HL(GB *GAMEBOY) {
 	log.Println("0x2A LD A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M *4
 }
 
 // 0x2B DEC HL
 func DEC_0x2B_HL(GB *GAMEBOY) {
 	log.Println("0x2B DEC HL")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x2C INC L
@@ -391,75 +446,134 @@ func LD_0x2E_L_n8(GB *GAMEBOY) {
 // 0x2F CPL
 func CPL_0x2F(GB *GAMEBOY) {
 	log.Println("0x2F CPL ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x30 JR NC_e8
 func JR_0x30_NC_e8(GB *GAMEBOY) {
 	log.Println("0x30 JR NC_e8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 3 // 3 if C flag is not set, 2 if set
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x31 LD SP_n16
 func LD_0x31_SP_n16(GB *GAMEBOY) {
 	log.Println("0x31 LD SP_n16")
+	lower := GB.MMU._rom[GB.CPU._r.PC+1]
+	upper := GB.MMU._rom[GB.CPU._r.PC+2]
+	GB.CPU._r.SP = (uint16(upper) << 8) | uint16(lower)
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x32 LD HL_A
 func LD_0x32_HL_A(GB *GAMEBOY) {
 	log.Println("0x32 LD HL_A")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x33 INC SP
 func INC_0x33_SP(GB *GAMEBOY) {
 	log.Println("0x33 INC SP")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x34 INC HL
 func INC_0x34_HL(GB *GAMEBOY) {
 	log.Println("0x34 INC HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x35 DEC HL
 func DEC_0x35_HL(GB *GAMEBOY) {
 	log.Println("0x35 DEC HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x36 LD HL_n8
 func LD_0x36_HL_n8(GB *GAMEBOY) {
 	log.Println("0x36 LD HL_n8")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x37 SCF
 func SCF_0x37(GB *GAMEBOY) {
 	log.Println("0x37 SCF ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x38 JR C_e8
 func JR_0x38_C_e8(GB *GAMEBOY) {
 	log.Println("0x38 JR C_e8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 3 // 3 if C flag is set, 2 if not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x39 ADD HL_SP
 func ADD_0x39_HL_SP(GB *GAMEBOY) {
 	log.Println("0x39 ADD HL_SP")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x3A LD A_HL
 func LD_0x3A_A_HL(GB *GAMEBOY) {
 	log.Println("0x3A LD A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x3B DEC SP
 func DEC_0x3B_SP(GB *GAMEBOY) {
 	log.Println("0x3B DEC SP")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x3C INC A
 func INC_0x3C_A(GB *GAMEBOY) {
 	log.Println("0x3C INC A")
 	GB.CPU._r.A++
+	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
-	GB.CPU._r.PC += 1
 }
 
 // 0x3D DEC A
@@ -483,6 +597,10 @@ func LD_0x3E_A_n8(GB *GAMEBOY) {
 // 0x3F CCF
 func CCF_0x3F(GB *GAMEBOY) {
 	log.Println("0x3F CCF ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x40 LD B_B
@@ -542,6 +660,11 @@ func LD_0x45_B_L(GB *GAMEBOY) {
 // 0x46 LD B_HL
 func LD_0x46_B_HL(GB *GAMEBOY) {
 	log.Println("0x46 LD B_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x47 LD B_A
@@ -610,6 +733,11 @@ func LD_0x4D_C_L(GB *GAMEBOY) {
 // 0x4E LD C_HL
 func LD_0x4E_C_HL(GB *GAMEBOY) {
 	log.Println("0x4E LD C_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x4F LD C_A
@@ -678,6 +806,11 @@ func LD_0x55_D_L(GB *GAMEBOY) {
 // 0x56 LD D_HL
 func LD_0x56_D_HL(GB *GAMEBOY) {
 	log.Println("0x56 LD D_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x57 LD D_A
@@ -746,6 +879,11 @@ func LD_0x5D_E_L(GB *GAMEBOY) {
 // 0x5E LD E_HL
 func LD_0x5E_E_HL(GB *GAMEBOY) {
 	log.Println("0x5E LD E_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x5F LD E_A
@@ -814,6 +952,11 @@ func LD_0x65_H_L(GB *GAMEBOY) {
 // 0x66 LD H_HL
 func LD_0x66_H_HL(GB *GAMEBOY) {
 	log.Println("0x66 LD H_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x67 LD H_A
@@ -882,6 +1025,11 @@ func LD_0x6D_L_L(GB *GAMEBOY) {
 // 0x6E LD L_HL
 func LD_0x6E_L_HL(GB *GAMEBOY) {
 	log.Println("0x6E LD L_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x6F LD L_A
@@ -896,41 +1044,80 @@ func LD_0x6F_L_A(GB *GAMEBOY) {
 // 0x70 LD HL_B
 func LD_0x70_HL_B(GB *GAMEBOY) {
 	log.Println("0x70 LD HL_B")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x71 LD HL_C
 func LD_0x71_HL_C(GB *GAMEBOY) {
 	log.Println("0x71 LD HL_C")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x72 LD HL_D
 func LD_0x72_HL_D(GB *GAMEBOY) {
 	log.Println("0x72 LD HL_D")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x73 LD HL_E
 func LD_0x73_HL_E(GB *GAMEBOY) {
 	log.Println("0x73 LD HL_E")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x74 LD HL_H
 func LD_0x74_HL_H(GB *GAMEBOY) {
 	log.Println("0x74 LD HL_H")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x75 LD HL_L
 func LD_0x75_HL_L(GB *GAMEBOY) {
 	log.Println("0x75 LD HL_L")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x76 HALT
 func HALT_0x76(GB *GAMEBOY) {
 	log.Println("0x76 HALT ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x77 LD HL_A
 func LD_0x77_HL_A(GB *GAMEBOY) {
 	log.Println("0x77 LD HL_A")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x78 LD A_B
@@ -990,6 +1177,11 @@ func LD_0x7D_A_L(GB *GAMEBOY) {
 // 0x7E LD A_HL
 func LD_0x7E_A_HL(GB *GAMEBOY) {
 	log.Println("0x7E LD A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x7F LD A_A
@@ -1058,6 +1250,11 @@ func ADD_0x85_A_L(GB *GAMEBOY) {
 // 0x86 ADD A_HL
 func ADD_0x86_A_HL(GB *GAMEBOY) {
 	log.Println("0x86 ADD A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x87 ADD A_A
@@ -1072,41 +1269,74 @@ func ADD_0x87_A_A(GB *GAMEBOY) {
 // 0x88 ADC A_B
 func ADC_0x88_A_B(GB *GAMEBOY) {
 	log.Println("0x88 ADC A_B")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x89 ADC A_C
 func ADC_0x89_A_C(GB *GAMEBOY) {
 	log.Println("0x89 ADC A_C")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x8A ADC A_D
 func ADC_0x8A_A_D(GB *GAMEBOY) {
 	log.Println("0x8A ADC A_D")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x8B ADC A_E
 func ADC_0x8B_A_E(GB *GAMEBOY) {
 	log.Println("0x8B ADC A_E")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x8C ADC A_H
 func ADC_0x8C_A_H(GB *GAMEBOY) {
 	log.Println("0x8C ADC A_H")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x8D ADC A_L
 func ADC_0x8D_A_L(GB *GAMEBOY) {
 	log.Println("0x8D ADC A_L")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x8E ADC A_HL
 func ADC_0x8E_A_HL(GB *GAMEBOY) {
 	log.Println("0x8E ADC A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x8F ADC A_A
 func ADC_0x8F_A_A(GB *GAMEBOY) {
 	log.Println("0x8F ADC A_A")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x90 SUB A_B
@@ -1166,6 +1396,11 @@ func SUB_0x95_A_L(GB *GAMEBOY) {
 // 0x96 SUB A_HL
 func SUB_0x96_A_HL(GB *GAMEBOY) {
 	log.Println("0x96 SUB A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x97 SUB A_A
@@ -1180,231 +1415,420 @@ func SUB_0x97_A_A(GB *GAMEBOY) {
 // 0x98 SBC A_B
 func SBC_0x98_A_B(GB *GAMEBOY) {
 	log.Println("0x98 SBC A_B")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x99 SBC A_C
 func SBC_0x99_A_C(GB *GAMEBOY) {
 	log.Println("0x99 SBC A_C")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x9A SBC A_D
 func SBC_0x9A_A_D(GB *GAMEBOY) {
 	log.Println("0x9A SBC A_D")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x9B SBC A_E
 func SBC_0x9B_A_E(GB *GAMEBOY) {
 	log.Println("0x9B SBC A_E")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x9C SBC A_H
 func SBC_0x9C_A_H(GB *GAMEBOY) {
 	log.Println("0x9C SBC A_H")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x9D SBC A_L
 func SBC_0x9D_A_L(GB *GAMEBOY) {
 	log.Println("0x9D SBC A_L")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x9E SBC A_HL
 func SBC_0x9E_A_HL(GB *GAMEBOY) {
 	log.Println("0x9E SBC A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0x9F SBC A_A
 func SBC_0x9F_A_A(GB *GAMEBOY) {
 	log.Println("0x9F SBC A_A")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA0 AND A_B
 func AND_0xA0_A_B(GB *GAMEBOY) {
 	log.Println("0xA0 AND A_B")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA1 AND A_C
 func AND_0xA1_A_C(GB *GAMEBOY) {
 	log.Println("0xA1 AND A_C")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA2 AND A_D
 func AND_0xA2_A_D(GB *GAMEBOY) {
 	log.Println("0xA2 AND A_D")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA3 AND A_E
 func AND_0xA3_A_E(GB *GAMEBOY) {
 	log.Println("0xA3 AND A_E")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA4 AND A_H
 func AND_0xA4_A_H(GB *GAMEBOY) {
 	log.Println("0xA4 AND A_H")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA5 AND A_L
 func AND_0xA5_A_L(GB *GAMEBOY) {
 	log.Println("0xA5 AND A_L")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA6 AND A_HL
 func AND_0xA6_A_HL(GB *GAMEBOY) {
 	log.Println("0xA6 AND A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA7 AND A_A
 func AND_0xA7_A_A(GB *GAMEBOY) {
 	log.Println("0xA7 AND A_A")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA8 XOR A_B
 func XOR_0xA8_A_B(GB *GAMEBOY) {
 	log.Println("0xA8 XOR A_B")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xA9 XOR A_C
 func XOR_0xA9_A_C(GB *GAMEBOY) {
 	log.Println("0xA9 XOR A_C")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xAA XOR A_D
 func XOR_0xAA_A_D(GB *GAMEBOY) {
 	log.Println("0xAA XOR A_D")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xAB XOR A_E
 func XOR_0xAB_A_E(GB *GAMEBOY) {
 	log.Println("0xAB XOR A_E")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xAC XOR A_H
 func XOR_0xAC_A_H(GB *GAMEBOY) {
 	log.Println("0xAC XOR A_H")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xAD XOR A_L
 func XOR_0xAD_A_L(GB *GAMEBOY) {
 	log.Println("0xAD XOR A_L")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xAE XOR A_HL
 func XOR_0xAE_A_HL(GB *GAMEBOY) {
 	log.Println("0xAE XOR A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xAF XOR A_A
 func XOR_0xAF_A_A(GB *GAMEBOY) {
 	log.Println("0xAF XOR A_A")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB0 OR A_B
 func OR_0xB0_A_B(GB *GAMEBOY) {
 	log.Println("0xB0 OR A_B")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB1 OR A_C
 func OR_0xB1_A_C(GB *GAMEBOY) {
 	log.Println("0xB1 OR A_C")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB2 OR A_D
 func OR_0xB2_A_D(GB *GAMEBOY) {
 	log.Println("0xB2 OR A_D")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB3 OR A_E
 func OR_0xB3_A_E(GB *GAMEBOY) {
 	log.Println("0xB3 OR A_E")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB4 OR A_H
 func OR_0xB4_A_H(GB *GAMEBOY) {
 	log.Println("0xB4 OR A_H")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB5 OR A_L
 func OR_0xB5_A_L(GB *GAMEBOY) {
 	log.Println("0xB5 OR A_L")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB6 OR A_HL
 func OR_0xB6_A_HL(GB *GAMEBOY) {
 	log.Println("0xB6 OR A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB7 OR A_A
 func OR_0xB7_A_A(GB *GAMEBOY) {
 	log.Println("0xB7 OR A_A")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB8 CP A_B
 func CP_0xB8_A_B(GB *GAMEBOY) {
 	log.Println("0xB8 CP A_B")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xB9 CP A_C
 func CP_0xB9_A_C(GB *GAMEBOY) {
 	log.Println("0xB9 CP A_C")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xBA CP A_D
 func CP_0xBA_A_D(GB *GAMEBOY) {
 	log.Println("0xBA CP A_D")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xBB CP A_E
 func CP_0xBB_A_E(GB *GAMEBOY) {
 	log.Println("0xBB CP A_E")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xBC CP A_H
 func CP_0xBC_A_H(GB *GAMEBOY) {
 	log.Println("0xBC CP A_H")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xBD CP A_L
 func CP_0xBD_A_L(GB *GAMEBOY) {
 	log.Println("0xBD CP A_L")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xBE CP A_HL
 func CP_0xBE_A_HL(GB *GAMEBOY) {
 	log.Println("0xBE CP A_HL")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF HL
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xBF CP A_A
 func CP_0xBF_A_A(GB *GAMEBOY) {
 	log.Println("0xBF CP A_A")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC0 RET NZ
 func RET_0xC0_NZ(GB *GAMEBOY) {
 	log.Println("0xC0 RET NZ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 5 // 5 is Z flag is not set, 2 if it is
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC1 POP BC
 func POP_0xC1_BC(GB *GAMEBOY) {
 	log.Println("0xC1 POP BC")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC2 JP NZ_a16
 func JP_0xC2_NZ_a16(GB *GAMEBOY) {
 	log.Println("0xC2 JP NZ_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 4 // 4 is Z flag is not set, 3 if it is
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC3 JP a16
 func JP_0xC3_a16(GB *GAMEBOY) {
 	log.Println("0xC3 JP a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC4 CALL NZ_a16
 func CALL_0xC4_NZ_a16(GB *GAMEBOY) {
 	log.Println("0xC4 CALL NZ_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 6 // 6 is Z flag is not set, 3 if it is
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC5 PUSH BC
 func PUSH_0xC5_BC(GB *GAMEBOY) {
 	log.Println("0xC5 PUSH BC")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC6 ADD A_n8
@@ -1419,76 +1843,136 @@ func ADD_0xC6_A_n8(GB *GAMEBOY) {
 // 0xC7 RST $00
 func RST_0xC7_dollar00(GB *GAMEBOY) {
 	log.Println("0xC7 RST $00")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC8 RET Z
 func RET_0xC8_Z(GB *GAMEBOY) {
 	log.Println("0xC8 RET Z")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 5 // 5 is Z flag is set, 2 if it is not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xC9 RET
 func RET_0xC9(GB *GAMEBOY) {
 	log.Println("0xC9 RET ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xCA JP Z_a16
 func JP_0xCA_Z_a16(GB *GAMEBOY) {
 	log.Println("0xCA JP Z_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 4 // 4 is Z flag is set, 3 if it is not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xCB PREFIX
 func PREFIX_0xCB(GB *GAMEBOY) {
 	log.Println("0xCB PREFIX ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xCC CALL Z_a16
 func CALL_0xCC_Z_a16(GB *GAMEBOY) {
 	log.Println("0xCC CALL Z_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 6 // 6 is Z flag is set, 3 if it is not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xCD CALL a16
 func CALL_0xCD_a16(GB *GAMEBOY) {
 	log.Println("0xCD CALL a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 6
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xCE ADC A_n8
 func ADC_0xCE_A_n8(GB *GAMEBOY) {
 	log.Println("0xCE ADC A_n8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xCF RST $08
 func RST_0xCF_dollar08(GB *GAMEBOY) {
 	log.Println("0xCF RST $08")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD0 RET NC
 func RET_0xD0_NC(GB *GAMEBOY) {
 	log.Println("0xD0 RET NC")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 5 // 5 is C flag is not set, 2 if it is
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD1 POP DE
 func POP_0xD1_DE(GB *GAMEBOY) {
 	log.Println("0xD1 POP DE")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD2 JP NC_a16
 func JP_0xD2_NC_a16(GB *GAMEBOY) {
 	log.Println("0xD2 JP NC_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 4 // 4 is C flag is not set, 3 if it is
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD3 ILLEGAL_D3
 func ILLEGAL_D3_0xD3(GB *GAMEBOY) {
 	log.Println("0xD3 ILLEGAL_D3 ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD4 CALL NC_a16
 func CALL_0xD4_NC_a16(GB *GAMEBOY) {
 	log.Println("0xD4 CALL NC_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 6 // 6 is C flag is not set, 3 if it is
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD5 PUSH DE
 func PUSH_0xD5_DE(GB *GAMEBOY) {
 	log.Println("0xD5 PUSH DE")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD6 SUB A_n8
@@ -1503,204 +1987,374 @@ func SUB_0xD6_A_n8(GB *GAMEBOY) {
 // 0xD7 RST $10
 func RST_0xD7_dollar10(GB *GAMEBOY) {
 	log.Println("0xD7 RST $10")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD8 RET C
 func RET_0xD8_C(GB *GAMEBOY) {
 	log.Println("0xD8 RET C")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 5 // 5 is C flag is set, 2 if it is not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xD9 RETI
 func RETI_0xD9(GB *GAMEBOY) {
 	log.Println("0xD9 RETI ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xDA JP C_a16
 func JP_0xDA_C_a16(GB *GAMEBOY) {
 	log.Println("0xDA JP C_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 5 // 5 is C flag is set, 3 if it is not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xDB ILLEGAL_DB
 func ILLEGAL_DB_0xDB(GB *GAMEBOY) {
 	log.Println("0xDB ILLEGAL_DB ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xDC CALL C_a16
 func CALL_0xDC_C_a16(GB *GAMEBOY) {
 	log.Println("0xDC CALL C_a16")
+	//NEEDS CODE
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 6 // 6 is C flag is set, 3 if it is not
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xDD ILLEGAL_DD
 func ILLEGAL_DD_0xDD(GB *GAMEBOY) {
 	log.Println("0xDD ILLEGAL_DD ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xDE SBC A_n8
 func SBC_0xDE_A_n8(GB *GAMEBOY) {
 	log.Println("0xDE SBC A_n8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xDF RST $18
 func RST_0xDF_dollar18(GB *GAMEBOY) {
 	log.Println("0xDF RST $18")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE0 LDH a8_A
 func LDH_0xE0_a8_A(GB *GAMEBOY) {
 	log.Println("0xE0 LDH a8_A")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF a8
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE1 POP HL
 func POP_0xE1_HL(GB *GAMEBOY) {
 	log.Println("0xE1 POP HL")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE2 LDH C_A
 func LDH_0xE2_C_A(GB *GAMEBOY) {
 	log.Println("0xE2 LDH C_A")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF C
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE3 ILLEGAL_E3
 func ILLEGAL_E3_0xE3(GB *GAMEBOY) {
 	log.Println("0xE3 ILLEGAL_E3 ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE4 ILLEGAL_E4
 func ILLEGAL_E4_0xE4(GB *GAMEBOY) {
 	log.Println("0xE4 ILLEGAL_E4 ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE5 PUSH HL
 func PUSH_0xE5_HL(GB *GAMEBOY) {
 	log.Println("0xE5 PUSH HL")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE6 AND A_n8
 func AND_0xE6_A_n8(GB *GAMEBOY) {
 	log.Println("0xE6 AND A_n8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE7 RST $20
 func RST_0xE7_dollar20(GB *GAMEBOY) {
 	log.Println("0xE7 RST $20")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE8 ADD SP_e8
 func ADD_0xE8_SP_e8(GB *GAMEBOY) {
 	log.Println("0xE8 ADD SP_e8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xE9 JP HL
 func JP_0xE9_HL(GB *GAMEBOY) {
 	log.Println("0xE9 JP HL")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xEA LD a16_A
 func LD_0xEA_a16_A(GB *GAMEBOY) {
 	log.Println("0xEA LD a16_A")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF a16
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xEB ILLEGAL_EB
 func ILLEGAL_EB_0xEB(GB *GAMEBOY) {
 	log.Println("0xEB ILLEGAL_EB ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xEC ILLEGAL_EC
 func ILLEGAL_EC_0xEC(GB *GAMEBOY) {
 	log.Println("0xEC ILLEGAL_EC ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xED ILLEGAL_ED
 func ILLEGAL_ED_0xED(GB *GAMEBOY) {
 	log.Println("0xED ILLEGAL_ED ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xEE XOR A_n8
 func XOR_0xEE_A_n8(GB *GAMEBOY) {
 	log.Println("0xEE XOR A_n8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xEF RST $28
 func RST_0xEF_dollar28(GB *GAMEBOY) {
 	log.Println("0xEF RST $28")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF0 LDH A_a8
 func LDH_0xF0_A_a8(GB *GAMEBOY) {
 	log.Println("0xF0 LDH A_a8")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF a8
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF1 POP AF
 func POP_0xF1_AF(GB *GAMEBOY) {
 	log.Println("0xF1 POP AF")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF2 LDH A_C
 func LDH_0xF2_A_C(GB *GAMEBOY) {
 	log.Println("0xF2 LDH A_C")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF C
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF3 DI
 func DI_0xF3(GB *GAMEBOY) {
 	log.Println("0xF3 DI ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF4 ILLEGAL_F4
 func ILLEGAL_F4_0xF4(GB *GAMEBOY) {
 	log.Println("0xF4 ILLEGAL_F4 ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF5 PUSH AF
 func PUSH_0xF5_AF(GB *GAMEBOY) {
 	log.Println("0xF5 PUSH AF")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF6 OR A_n8
 func OR_0xF6_A_n8(GB *GAMEBOY) {
 	log.Println("0xF6 OR A_n8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF7 RST $30
 func RST_0xF7_dollar30(GB *GAMEBOY) {
 	log.Println("0xF7 RST $30")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF8 LD HL_SP_e8
 func LD_0xF8_HL_SP_e8(GB *GAMEBOY) {
 	log.Println("0xF8 LD HL_SP_e8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 3
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xF9 LD SP_HL
 func LD_0xF9_SP_HL(GB *GAMEBOY) {
 	log.Println("0xF9 LD SP_HL")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xFA LD A_a16
 func LD_0xFA_A_a16(GB *GAMEBOY) {
 	log.Println("0xFA LD A_a16")
+	//NEEDS CODE
+	//VALUE AT MEMORY LOC OF a16
+	GB.CPU._r.PC += 3
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xFB EI
 func EI_0xFB(GB *GAMEBOY) {
 	log.Println("0xFB EI ")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xFC ILLEGAL_FC
 func ILLEGAL_FC_0xFC(GB *GAMEBOY) {
 	log.Println("0xFC ILLEGAL_FC ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xFD ILLEGAL_FD
 func ILLEGAL_FD_0xFD(GB *GAMEBOY) {
 	log.Println("0xFD ILLEGAL_FD ")
+	// ILLEGAL OPERATION
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xFE CP A_n8
 func CP_0xFE_A_n8(GB *GAMEBOY) {
 	log.Println("0xFE CP A_n8")
+	//NEEDS CODE
+	GB.CPU._r.PC += 2
+	GB.CPU._r.M = 2
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
 
 // 0xFF RST $38
 func RST_0xFF_dollar38(GB *GAMEBOY) {
 	log.Println("0xFF RST $38")
+	//NEEDS CODE
+	GB.CPU._r.PC += 1
+	GB.CPU._r.M = 4
+	GB.CPU._r.T = GB.CPU._r.M * 4
 }
