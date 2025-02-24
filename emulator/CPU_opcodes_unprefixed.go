@@ -147,11 +147,20 @@ func ADD_0x09_HL_BC(GB *GAMEBOY) {
 	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
 	combinedRight := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
 	result := combinedLeft + combinedRight
+	result32 := uint32(combinedLeft) + uint32(combinedRight)
 	GB.CPU._r.H = byte(result >> 8)
 	GB.CPU._r.L = byte(result & 0xFF)
-	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.F.N = 0
-
+	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result32 >= 0x00010000 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -366,11 +375,20 @@ func ADD_0x19_HL_DE(GB *GAMEBOY) {
 	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
 	combinedRight := uint16(GB.CPU._r.D)<<8 | uint16(GB.CPU._r.E)
 	result := combinedLeft + combinedRight
+	result32 := uint32(combinedLeft) + uint32(combinedRight)
 	GB.CPU._r.H = byte(result >> 8)
 	GB.CPU._r.L = byte(result & 0xFF)
-	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.F.N = 0
-
+	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result32 >= 0x00010000 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -600,11 +618,20 @@ func ADD_0x29_HL_HL(GB *GAMEBOY) {
 	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
 	combinedRight := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
 	result := combinedLeft + combinedRight
+	result32 := uint32(combinedLeft) + uint32(combinedRight)
 	GB.CPU._r.H = byte(result >> 8)
 	GB.CPU._r.L = byte(result & 0xFF)
-	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.F.N = 0
-
+	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result32 >= 0x00010000 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -801,11 +828,20 @@ func ADD_0x39_HL_SP(GB *GAMEBOY) {
 	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
 	combinedRight := GB.CPU._r.SP
 	result := combinedLeft + combinedRight
+	result32 := uint32(combinedLeft) + uint32(combinedRight)
 	GB.CPU._r.H = byte(result >> 8)
 	GB.CPU._r.L = byte(result & 0xFF)
-	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.F.N = 0
-
+	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result32 >= 0x00010000 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
