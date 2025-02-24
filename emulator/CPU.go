@@ -12,7 +12,7 @@ type F_REGISTER struct {
 }
 
 type REGISTER struct {
-	A uint8 //Accumulator
+	A uint8      //Accumulator
 	F F_REGISTER //Flags
 
 	B, C uint8
@@ -578,8 +578,8 @@ func reset(GB *GAMEBOY) {
 	GB.CPU._r.F.C = 0
 	GB.CPU._r.PC = 0
 	GB.CPU._r.SP = 0
-	GB.CPU._r.M = 0
-	GB.CPU._r.T = 0
+	GB.CPU._r.M = 1
+	GB.CPU._r.T = 1
 
 	// Reset Clock
 	GB.CPU._c.M = 0
@@ -590,14 +590,14 @@ func newCPU() *CPU {
 	CPU := &CPU{}
 
 	CPU._r = REGISTER{
-		A:  0,
-		B:  0,
-		C:  0,
-		D:  0,
-		E:  0,
-		H:  0,
-		L:  0,
-		F:  F_REGISTER{
+		A: 0,
+		B: 0,
+		C: 0,
+		D: 0,
+		E: 0,
+		H: 0,
+		L: 0,
+		F: F_REGISTER{
 			Z: 0,
 			N: 0,
 			H: 0,
@@ -605,8 +605,8 @@ func newCPU() *CPU {
 		},
 		PC: 0,
 		SP: 0,
-		M:  0,
-		T:  0,
+		M:  1,
+		T:  1,
 	}
 
 	CPU._c = CLOCK{

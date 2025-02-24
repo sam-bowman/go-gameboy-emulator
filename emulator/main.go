@@ -33,8 +33,15 @@ type Game struct {
 
 // Update function, called every frame.
 func (g *Game) Update() error {
-	g.GAMEBOY.CPU.exec(&g.GAMEBOY)
-	log.Println(g.GAMEBOY.CPU._r)
+	if g.GAMEBOY.CPU._r.T == 1 && g.GAMEBOY.CPU._r.M == 1 {
+		g.GAMEBOY.CPU.exec(&g.GAMEBOY)
+	}
+	g.GAMEBOY.CPU._r.T -= 1
+	g.GAMEBOY.CPU._c.T += 1
+	if g.GAMEBOY.CPU._r.T%4 == 0 {
+		g.GAMEBOY.CPU._r.M -= 1
+		g.GAMEBOY.CPU._c.M += 1
+	}
 	return nil
 }
 
