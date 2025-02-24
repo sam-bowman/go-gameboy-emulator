@@ -45,14 +45,7 @@ func LD_0x02_addrBC_A(GB *GAMEBOY) {
 // 0x03 INC BC
 func INC_0x03_BC(GB *GAMEBOY) {
 	log.Println("0x03 INC BC")
-	combined := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
-	combined += 1
-	GB.CPU._r.B = byte(combined >> 8)
-	GB.CPU._r.C = byte(combined & 0xFF)
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	INC_r8r8(GB, GB.CPU._r.B, GB.CPU._r.C)
 }
 
 // 0x04 INC B
@@ -70,18 +63,13 @@ func DEC_0x05_B(GB *GAMEBOY) {
 // 0x06 LD B_n8
 func LD_0x06_B_n8(GB *GAMEBOY) {
 	log.Println("0x06 LD B_n8")
-	GB.CPU._r.B = GB.MMU._rom[GB.CPU._r.PC+1]
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_n8(GB)
 }
 
 // 0x07 RLCA
 func RLCA_0x07(GB *GAMEBOY) {
 	log.Println("0x07 RLCA ")
 	//NEEDS CODE
-	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -101,27 +89,7 @@ func LD_0x08_addra16_SP(GB *GAMEBOY) {
 // 0x09 ADD HL_BC
 func ADD_0x09_HL_BC(GB *GAMEBOY) {
 	log.Println("0x09 ADD HL_BC")
-	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	combinedRight := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
-	result := combinedLeft + combinedRight
-	result32 := uint32(combinedLeft) + uint32(combinedRight)
-	GB.CPU._r.H = byte(result >> 8)
-	GB.CPU._r.L = byte(result & 0xFF)
-	GB.CPU._r.F.N = 0
-	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
-	if result32 >= 0x00010000 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.H, GB.CPU._r.L = ADD_r8r8_r8r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.B, GB.CPU._r.C)
 }
 
 // 0x0A LD A_addrBC
@@ -137,14 +105,7 @@ func LD_0x0A_A_addrBC(GB *GAMEBOY) {
 // 0x0B DEC BC
 func DEC_0x0B_BC(GB *GAMEBOY) {
 	log.Println("0x0B DEC BC")
-	combined := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
-	combined -= 1
-	GB.CPU._r.B = byte(combined >> 8)
-	GB.CPU._r.C = byte(combined & 0xFF)
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B, GB.CPU._r.C = DEC_r8r8(GB, GB.CPU._r.B, GB.CPU._r.C)
 }
 
 // 0x0C INC C
@@ -162,11 +123,7 @@ func DEC_0x0D_C(GB *GAMEBOY) {
 // 0x0E LD C_n8
 func LD_0x0E_C_n8(GB *GAMEBOY) {
 	log.Println("0x0E LD C_n8")
-	GB.CPU._r.C = GB.MMU._rom[GB.CPU._r.PC+1]
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_n8(GB)
 }
 
 // 0x0F RRCA
@@ -208,14 +165,7 @@ func LD_0x12_addrDE_A(GB *GAMEBOY) {
 // 0x13 INC DE
 func INC_0x13_DE(GB *GAMEBOY) {
 	log.Println("0x13 INC DE")
-	combined := uint16(GB.CPU._r.D)<<8 | uint16(GB.CPU._r.E)
-	combined += 1
-	GB.CPU._r.D = byte(combined >> 8)
-	GB.CPU._r.E = byte(combined & 0xFF)
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	INC_r8r8(GB, GB.CPU._r.D, GB.CPU._r.E)
 }
 
 // 0x14 INC D
@@ -233,11 +183,7 @@ func DEC_0x15_D(GB *GAMEBOY) {
 // 0x16 LD D_n8
 func LD_0x16_D_n8(GB *GAMEBOY) {
 	log.Println("0x16 LD D_n8")
-	GB.CPU._r.D = GB.MMU._rom[GB.CPU._r.PC+1]
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_n8(GB)
 }
 
 // 0x17 RLA
@@ -263,27 +209,7 @@ func JR_0x18_e8(GB *GAMEBOY) {
 // 0x19 ADD HL_DE
 func ADD_0x19_HL_DE(GB *GAMEBOY) {
 	log.Println("0x19 ADD HL_DE")
-	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	combinedRight := uint16(GB.CPU._r.D)<<8 | uint16(GB.CPU._r.E)
-	result := combinedLeft + combinedRight
-	result32 := uint32(combinedLeft) + uint32(combinedRight)
-	GB.CPU._r.H = byte(result >> 8)
-	GB.CPU._r.L = byte(result & 0xFF)
-	GB.CPU._r.F.N = 0
-	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
-	if result32 >= 0x00010000 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.H, GB.CPU._r.L = ADD_r8r8_r8r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.D, GB.CPU._r.E)
 }
 
 // 0x1A LD A_addrDE
@@ -299,14 +225,7 @@ func LD_0x1A_A_addrDE(GB *GAMEBOY) {
 // 0x1B DEC DE
 func DEC_0x1B_DE(GB *GAMEBOY) {
 	log.Println("0x1B DEC DE")
-	combined := uint16(GB.CPU._r.D)<<8 | uint16(GB.CPU._r.E)
-	combined -= 1
-	GB.CPU._r.D = byte(combined >> 8)
-	GB.CPU._r.E = byte(combined & 0xFF)
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D, GB.CPU._r.E = DEC_r8r8(GB, GB.CPU._r.D, GB.CPU._r.E)
 }
 
 // 0x1C INC E
@@ -324,11 +243,7 @@ func DEC_0x1D_E(GB *GAMEBOY) {
 // 0x1E LD E_n8
 func LD_0x1E_E_n8(GB *GAMEBOY) {
 	log.Println("0x1E LD E_n8")
-	GB.CPU._r.E = GB.MMU._rom[GB.CPU._r.PC+1]
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_n8(GB)
 }
 
 // 0x1F RRA
@@ -370,14 +285,7 @@ func LD_0x22_addrHL_A(GB *GAMEBOY) {
 // 0x23 INC HL
 func INC_0x23_HL(GB *GAMEBOY) {
 	log.Println("0x23 INC HL")
-	combined := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	combined += 1
-	GB.CPU._r.H = byte(combined >> 8)
-	GB.CPU._r.L = byte(combined & 0xFF)
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	INC_r8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x24 INC H
@@ -395,11 +303,7 @@ func DEC_0x25_H(GB *GAMEBOY) {
 // 0x26 LD H_n8
 func LD_0x26_H_n8(GB *GAMEBOY) {
 	log.Println("0x26 LD H_n8")
-	GB.CPU._r.H = GB.MMU._rom[GB.CPU._r.PC+1]
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_n8(GB)
 }
 
 // 0x27 DAA
@@ -425,27 +329,7 @@ func JR_0x28_Z_e8(GB *GAMEBOY) {
 // 0x29 ADD HL_HL
 func ADD_0x29_HL_HL(GB *GAMEBOY) {
 	log.Println("0x29 ADD HL_HL")
-	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	combinedRight := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	result := combinedLeft + combinedRight
-	result32 := uint32(combinedLeft) + uint32(combinedRight)
-	GB.CPU._r.H = byte(result >> 8)
-	GB.CPU._r.L = byte(result & 0xFF)
-	GB.CPU._r.F.N = 0
-	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
-	if result32 >= 0x00010000 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.H, GB.CPU._r.L = ADD_r8r8_r8r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x2A LD A_addrHL
@@ -461,14 +345,7 @@ func LD_0x2A_A_addrHL(GB *GAMEBOY) {
 // 0x2B DEC HL
 func DEC_0x2B_HL(GB *GAMEBOY) {
 	log.Println("0x2B DEC HL")
-	combined := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	combined -= 1
-	GB.CPU._r.H = byte(combined >> 8)
-	GB.CPU._r.L = byte(combined & 0xFF)
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H, GB.CPU._r.L = DEC_r8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x2C INC L
@@ -486,11 +363,7 @@ func DEC_0x2D_L(GB *GAMEBOY) {
 // 0x2E LD L_n8
 func LD_0x2E_L_n8(GB *GAMEBOY) {
 	log.Println("0x2E LD L_n8")
-	GB.CPU._r.L = GB.MMU._rom[GB.CPU._r.PC+1]
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_n8(GB)
 }
 
 // 0x2F CPL
@@ -516,12 +389,7 @@ func JR_0x30_NC_e8(GB *GAMEBOY) {
 // 0x31 LD SP_n16
 func LD_0x31_SP_n16(GB *GAMEBOY) {
 	log.Println("0x31 LD SP_n16")
-	combined := uint16(GB.MMU._rom[GB.CPU._r.PC+2])<<8 | uint16(GB.MMU._rom[GB.CPU._r.PC+1])
-	GB.CPU._r.SP = combined
-	GB.CPU._r.PC += 3
-	GB.CPU._r.M = 3
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.SP = LD_r16_n16(GB)
 }
 
 // 0x32 LD addrHL_A
@@ -537,11 +405,7 @@ func LD_0x32_addrHL_A(GB *GAMEBOY) {
 // 0x33 INC SP
 func INC_0x33_SP(GB *GAMEBOY) {
 	log.Println("0x33 INC SP")
-	GB.CPU._r.SP += 1
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.SP = INC_r16(GB, GB.CPU._r.SP)
 }
 
 // 0x34 INC addrHL
@@ -597,27 +461,7 @@ func JR_0x38_C_e8(GB *GAMEBOY) {
 // 0x39 ADD HL_SP
 func ADD_0x39_HL_SP(GB *GAMEBOY) {
 	log.Println("0x39 ADD HL_SP")
-	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	combinedRight := GB.CPU._r.SP
-	result := combinedLeft + combinedRight
-	result32 := uint32(combinedLeft) + uint32(combinedRight)
-	GB.CPU._r.H = byte(result >> 8)
-	GB.CPU._r.L = byte(result & 0xFF)
-	GB.CPU._r.F.N = 0
-	if (((combinedLeft & 0xFFF) + (combinedRight & 0xFFF)) & 0x1000) == 0x1000 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
-	if result32 >= 0x00010000 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.H, GB.CPU._r.L = ADD_r8r8_r16(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.SP)
 }
 
 // 0x3A LD A_addrHL
@@ -633,11 +477,7 @@ func LD_0x3A_A_addrHL(GB *GAMEBOY) {
 // 0x3B DEC SP
 func DEC_0x3B_SP(GB *GAMEBOY) {
 	log.Println("0x3B DEC SP")
-	GB.CPU._r.SP -= 1
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.SP = DEC_r16(GB, GB.CPU._r.SP)
 }
 
 // 0x3C INC A
@@ -655,11 +495,7 @@ func DEC_0x3D_A(GB *GAMEBOY) {
 // 0x3E LD A_n8
 func LD_0x3E_A_n8(GB *GAMEBOY) {
 	log.Println("0x3E LD A_n8")
-	GB.CPU._r.A = GB.MMU._rom[GB.CPU._r.PC+1]
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_n8(GB)
 }
 
 // 0x3F CCF
@@ -675,61 +511,37 @@ func CCF_0x3F(GB *GAMEBOY) {
 // 0x40 LD B_B
 func LD_0x40_B_B(GB *GAMEBOY) {
 	log.Println("0x40 LD B_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_r8(GB, GB.CPU._r.B)
 }
 
 // 0x41 LD B_C
 func LD_0x41_B_C(GB *GAMEBOY) {
 	log.Println("0x41 LD B_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_r8(GB, GB.CPU._r.C)
 }
 
 // 0x42 LD B_D
 func LD_0x42_B_D(GB *GAMEBOY) {
 	log.Println("0x42 LD B_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_r8(GB, GB.CPU._r.D)
 }
 
 // 0x43 LD B_E
 func LD_0x43_B_E(GB *GAMEBOY) {
 	log.Println("0x43 LD B_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_r8(GB, GB.CPU._r.E)
 }
 
 // 0x44 LD B_H
 func LD_0x44_B_H(GB *GAMEBOY) {
 	log.Println("0x44 LD B_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_r8(GB, GB.CPU._r.H)
 }
 
 // 0x45 LD B_L
 func LD_0x45_B_L(GB *GAMEBOY) {
 	log.Println("0x45 LD B_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_r8(GB, GB.CPU._r.L)
 }
 
 // 0x46 LD B_addrHL
@@ -745,71 +557,43 @@ func LD_0x46_B_addrHL(GB *GAMEBOY) {
 // 0x47 LD B_A
 func LD_0x47_B_A(GB *GAMEBOY) {
 	log.Println("0x47 LD B_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_r8(GB, GB.CPU._r.A)
 }
 
 // 0x48 LD C_B
 func LD_0x48_C_B(GB *GAMEBOY) {
 	log.Println("0x48 LD C_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_r8(GB, GB.CPU._r.B)
 }
 
 // 0x49 LD C_C
 func LD_0x49_C_C(GB *GAMEBOY) {
 	log.Println("0x49 LD C_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_r8(GB, GB.CPU._r.C)
 }
 
 // 0x4A LD C_D
 func LD_0x4A_C_D(GB *GAMEBOY) {
 	log.Println("0x4A LD C_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_r8(GB, GB.CPU._r.D)
 }
 
 // 0x4B LD C_E
 func LD_0x4B_C_E(GB *GAMEBOY) {
 	log.Println("0x4B LD C_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_r8(GB, GB.CPU._r.E)
 }
 
 // 0x4C LD C_H
 func LD_0x4C_C_H(GB *GAMEBOY) {
 	log.Println("0x4C LD C_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_r8(GB, GB.CPU._r.H)
 }
 
 // 0x4D LD C_L
 func LD_0x4D_C_L(GB *GAMEBOY) {
 	log.Println("0x4D LD C_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_r8(GB, GB.CPU._r.L)
 }
 
 // 0x4E LD C_addrHL
@@ -825,71 +609,43 @@ func LD_0x4E_C_addrHL(GB *GAMEBOY) {
 // 0x4F LD C_A
 func LD_0x4F_C_A(GB *GAMEBOY) {
 	log.Println("0x4F LD C_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_r8(GB, GB.CPU._r.A)
 }
 
 // 0x50 LD D_B
 func LD_0x50_D_B(GB *GAMEBOY) {
 	log.Println("0x50 LD D_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_r8(GB, GB.CPU._r.B)
 }
 
 // 0x51 LD D_C
 func LD_0x51_D_C(GB *GAMEBOY) {
 	log.Println("0x51 LD D_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_r8(GB, GB.CPU._r.C)
 }
 
 // 0x52 LD D_D
 func LD_0x52_D_D(GB *GAMEBOY) {
 	log.Println("0x52 LD D_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_r8(GB, GB.CPU._r.D)
 }
 
 // 0x53 LD D_E
 func LD_0x53_D_E(GB *GAMEBOY) {
 	log.Println("0x53 LD D_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_r8(GB, GB.CPU._r.E)
 }
 
 // 0x54 LD D_H
 func LD_0x54_D_H(GB *GAMEBOY) {
 	log.Println("0x54 LD D_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_r8(GB, GB.CPU._r.H)
 }
 
 // 0x55 LD D_L
 func LD_0x55_D_L(GB *GAMEBOY) {
 	log.Println("0x55 LD D_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_r8(GB, GB.CPU._r.L)
 }
 
 // 0x56 LD D_addrHL
@@ -905,71 +661,43 @@ func LD_0x56_D_addrHL(GB *GAMEBOY) {
 // 0x57 LD D_A
 func LD_0x57_D_A(GB *GAMEBOY) {
 	log.Println("0x57 LD D_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_r8(GB, GB.CPU._r.A)
 }
 
 // 0x58 LD E_B
 func LD_0x58_E_B(GB *GAMEBOY) {
 	log.Println("0x58 LD E_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_r8(GB, GB.CPU._r.B)
 }
 
 // 0x59 LD E_C
 func LD_0x59_E_C(GB *GAMEBOY) {
 	log.Println("0x59 LD E_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_r8(GB, GB.CPU._r.C)
 }
 
 // 0x5A LD E_D
 func LD_0x5A_E_D(GB *GAMEBOY) {
 	log.Println("0x5A LD E_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_r8(GB, GB.CPU._r.D)
 }
 
 // 0x5B LD E_E
 func LD_0x5B_E_E(GB *GAMEBOY) {
 	log.Println("0x5B LD E_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_r8(GB, GB.CPU._r.E)
 }
 
 // 0x5C LD E_H
 func LD_0x5C_E_H(GB *GAMEBOY) {
 	log.Println("0x5C LD E_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_r8(GB, GB.CPU._r.H)
 }
 
 // 0x5D LD E_L
 func LD_0x5D_E_L(GB *GAMEBOY) {
 	log.Println("0x5D LD E_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_r8(GB, GB.CPU._r.L)
 }
 
 // 0x5E LD E_addrHL
@@ -985,71 +713,43 @@ func LD_0x5E_E_addrHL(GB *GAMEBOY) {
 // 0x5F LD E_A
 func LD_0x5F_E_A(GB *GAMEBOY) {
 	log.Println("0x5F LD E_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_r8(GB, GB.CPU._r.A)
 }
 
 // 0x60 LD H_B
 func LD_0x60_H_B(GB *GAMEBOY) {
 	log.Println("0x60 LD H_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_r8(GB, GB.CPU._r.B)
 }
 
 // 0x61 LD H_C
 func LD_0x61_H_C(GB *GAMEBOY) {
 	log.Println("0x61 LD H_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_r8(GB, GB.CPU._r.C)
 }
 
 // 0x62 LD H_D
 func LD_0x62_H_D(GB *GAMEBOY) {
 	log.Println("0x62 LD H_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_r8(GB, GB.CPU._r.D)
 }
 
 // 0x63 LD H_E
 func LD_0x63_H_E(GB *GAMEBOY) {
 	log.Println("0x63 LD H_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_r8(GB, GB.CPU._r.E)
 }
 
 // 0x64 LD H_H
 func LD_0x64_H_H(GB *GAMEBOY) {
 	log.Println("0x64 LD H_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_r8(GB, GB.CPU._r.H)
 }
 
 // 0x65 LD H_L
 func LD_0x65_H_L(GB *GAMEBOY) {
 	log.Println("0x65 LD H_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_r8(GB, GB.CPU._r.L)
 }
 
 // 0x66 LD H_addrHL
@@ -1065,71 +765,43 @@ func LD_0x66_H_addrHL(GB *GAMEBOY) {
 // 0x67 LD H_A
 func LD_0x67_H_A(GB *GAMEBOY) {
 	log.Println("0x67 LD H_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_r8(GB, GB.CPU._r.A)
 }
 
 // 0x68 LD L_B
 func LD_0x68_L_B(GB *GAMEBOY) {
 	log.Println("0x68 LD L_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_r8(GB, GB.CPU._r.B)
 }
 
 // 0x69 LD L_C
 func LD_0x69_L_C(GB *GAMEBOY) {
 	log.Println("0x69 LD L_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_r8(GB, GB.CPU._r.C)
 }
 
 // 0x6A LD L_D
 func LD_0x6A_L_D(GB *GAMEBOY) {
 	log.Println("0x6A LD L_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_r8(GB, GB.CPU._r.D)
 }
 
 // 0x6B LD L_E
 func LD_0x6B_L_E(GB *GAMEBOY) {
 	log.Println("0x6B LD L_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_r8(GB, GB.CPU._r.E)
 }
 
 // 0x6C LD L_H
 func LD_0x6C_L_H(GB *GAMEBOY) {
 	log.Println("0x6C LD L_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_r8(GB, GB.CPU._r.H)
 }
 
 // 0x6D LD L_L
 func LD_0x6D_L_L(GB *GAMEBOY) {
 	log.Println("0x6D LD L_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_r8(GB, GB.CPU._r.L)
 }
 
 // 0x6E LD L_addrHL
@@ -1145,11 +817,7 @@ func LD_0x6E_L_addrHL(GB *GAMEBOY) {
 // 0x6F LD L_A
 func LD_0x6F_L_A(GB *GAMEBOY) {
 	log.Println("0x6F LD L_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_r8(GB, GB.CPU._r.A)
 }
 
 // 0x70 LD addrHL_B
@@ -1235,61 +903,37 @@ func LD_0x77_addrHL_A(GB *GAMEBOY) {
 // 0x78 LD A_B
 func LD_0x78_A_B(GB *GAMEBOY) {
 	log.Println("0x78 LD A_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_r8(GB, GB.CPU._r.B)
 }
 
 // 0x79 LD A_C
 func LD_0x79_A_C(GB *GAMEBOY) {
 	log.Println("0x79 LD A_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_r8(GB, GB.CPU._r.C)
 }
 
 // 0x7A LD A_D
 func LD_0x7A_A_D(GB *GAMEBOY) {
 	log.Println("0x7A LD A_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_r8(GB, GB.CPU._r.D)
 }
 
 // 0x7B LD A_E
 func LD_0x7B_A_E(GB *GAMEBOY) {
 	log.Println("0x7B LD A_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_r8(GB, GB.CPU._r.E)
 }
 
 // 0x7C LD A_H
 func LD_0x7C_A_H(GB *GAMEBOY) {
 	log.Println("0x7C LD A_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_r8(GB, GB.CPU._r.H)
 }
 
 // 0x7D LD A_L
 func LD_0x7D_A_L(GB *GAMEBOY) {
 	log.Println("0x7D LD A_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_r8(GB, GB.CPU._r.L)
 }
 
 // 0x7E LD A_addrHL
@@ -1305,11 +949,7 @@ func LD_0x7E_A_addrHL(GB *GAMEBOY) {
 // 0x7F LD A_A
 func LD_0x7F_A_A(GB *GAMEBOY) {
 	log.Println("0x7F LD A_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_r8(GB, GB.CPU._r.A)
 }
 
 // 0x80 ADD A_B
