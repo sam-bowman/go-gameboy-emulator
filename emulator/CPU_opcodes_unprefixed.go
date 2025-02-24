@@ -222,7 +222,8 @@ func STOP_0x10_n8(GB *GAMEBOY) {
 // 0x11 LD DE_n16
 func LD_0x11_DE_n16(GB *GAMEBOY) {
 	log.Println("0x11 LD DE_n16")
-	//NEEDS CODE
+	GB.CPU._r.D = GB.MMU._rom[GB.CPU._r.PC+2]
+	GB.CPU._r.E = GB.MMU._rom[GB.CPU._r.PC+1]
 	GB.CPU._r.PC += 3
 	GB.CPU._r.M = 3
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -407,7 +408,8 @@ func JR_0x20_NZ_e8(GB *GAMEBOY) {
 // 0x21 LD HL_n16
 func LD_0x21_HL_n16(GB *GAMEBOY) {
 	log.Println("0x21 LD HL_n16")
-	//NEEDS CODE
+	GB.CPU._r.H = GB.MMU._rom[GB.CPU._r.PC+2]
+	GB.CPU._r.L = GB.MMU._rom[GB.CPU._r.PC+1]
 	GB.CPU._r.PC += 3
 	GB.CPU._r.M = 3
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -592,7 +594,8 @@ func JR_0x30_NC_e8(GB *GAMEBOY) {
 // 0x31 LD SP_n16
 func LD_0x31_SP_n16(GB *GAMEBOY) {
 	log.Println("0x31 LD SP_n16")
-	//NEEDS CODE
+	combined := uint16(GB.MMU._rom[GB.CPU._r.PC+2])<<8 | uint16(GB.MMU._rom[GB.CPU._r.PC+1])
+	GB.CPU._r.SP = combined
 	GB.CPU._r.PC += 3
 	GB.CPU._r.M = 3
 	GB.CPU._r.T = GB.CPU._r.M * 4
