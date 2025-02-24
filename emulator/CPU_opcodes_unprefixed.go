@@ -11,6 +11,12 @@ import "log"
 //opcode source: https://gbdev.io/gb-opcodes/optables/
 //interactive reference table: https://meganesu.github.io/generate-gb-opcodes/
 
+//0b10000000 = Z : Zero
+//0b01000000 = N : Subtraction
+//0b00100000 = H : Half Carry
+//0b00010000 = C : Carry
+//Letter means set as per the operation dictates, 1 means set, 0 means unset, - means unchanged.
+
 // 0x00 NOP
 func NOP_0x00(GB *GAMEBOY) {
 	log.Println("0x00 NOP")
@@ -58,6 +64,17 @@ func INC_0x03_BC(GB *GAMEBOY) {
 func INC_0x04_B(GB *GAMEBOY) {
 	log.Println("0x04 INC B")
 	GB.CPU._r.B += 1
+
+	if GB.CPU._r.B == 0 {
+		GB.CPU._r.F.Z = 1
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if ((GB.CPU._r.B & 0b00001111 == 0b00000000) && (GB.CPU._r.B | 0b00010000 == 0b00010000)) {
+		GB.CPU._r.F.H = 1
+	}
+
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -68,6 +85,7 @@ func INC_0x04_B(GB *GAMEBOY) {
 func DEC_0x05_B(GB *GAMEBOY) {
 	log.Println("0x05 DEC B")
 	GB.CPU._r.B -= 1
+	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -88,6 +106,7 @@ func LD_0x06_B_n8(GB *GAMEBOY) {
 func RLCA_0x07(GB *GAMEBOY) {
 	log.Println("0x07 RLCA ")
 	//NEEDS CODE
+	//NEEDS CODE (FLAG HANDLING)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -142,7 +161,18 @@ func DEC_0x0B_BC(GB *GAMEBOY) {
 // 0x0C INC C
 func INC_0x0C_C(GB *GAMEBOY) {
 	log.Println("0x0C INC C")
-	//NEEDS CODE
+	GB.CPU._r.C += 1
+
+	if GB.CPU._r.C == 0 {
+		GB.CPU._r.F.Z = 1
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if ((GB.CPU._r.C & 0b00001111 == 0b00000000) && (GB.CPU._r.C | 0b00010000 == 0b00010000)) {
+		GB.CPU._r.F.H = 1
+	}
+	
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -212,7 +242,10 @@ func LD_0x12_addrDE_A(GB *GAMEBOY) {
 // 0x13 INC DE
 func INC_0x13_DE(GB *GAMEBOY) {
 	log.Println("0x13 INC DE")
-	//NEEDS CODE
+	combined := uint16(GB.CPU._r.D)<<8 | uint16(GB.CPU._r.E)
+	combined += 1
+	GB.CPU._r.D = byte(combined >> 8)
+	GB.CPU._r.E = byte(combined & 0xFF)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -222,7 +255,18 @@ func INC_0x13_DE(GB *GAMEBOY) {
 // 0x14 INC D
 func INC_0x14_D(GB *GAMEBOY) {
 	log.Println("0x14 INC D")
-	//NEEDS CODE
+	GB.CPU._r.D += 1
+
+	if GB.CPU._r.D == 0 {
+		GB.CPU._r.F.Z = 1
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if ((GB.CPU._r.D & 0b00001111 == 0b00000000) && (GB.CPU._r.D | 0b00010000 == 0b00010000)) {
+		GB.CPU._r.F.H = 1
+	}
+	
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -302,7 +346,18 @@ func DEC_0x1B_DE(GB *GAMEBOY) {
 // 0x1C INC E
 func INC_0x1C_E(GB *GAMEBOY) {
 	log.Println("0x1C INC E")
-	//NEEDS CODE
+	GB.CPU._r.E += 1
+
+	if GB.CPU._r.E == 0 {
+		GB.CPU._r.F.Z = 1
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if ((GB.CPU._r.E & 0b00001111 == 0b00000000) && (GB.CPU._r.E | 0b00010000 == 0b00010000)) {
+		GB.CPU._r.F.H = 1
+	}
+	
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -372,7 +427,10 @@ func LD_0x22_addrHL_A(GB *GAMEBOY) {
 // 0x23 INC HL
 func INC_0x23_HL(GB *GAMEBOY) {
 	log.Println("0x23 INC HL")
-	//NEEDS CODE
+	combined := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
+	combined += 1
+	GB.CPU._r.H = byte(combined >> 8)
+	GB.CPU._r.L = byte(combined & 0xFF)
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -382,7 +440,18 @@ func INC_0x23_HL(GB *GAMEBOY) {
 // 0x24 INC H
 func INC_0x24_H(GB *GAMEBOY) {
 	log.Println("0x24 INC H")
-	//NEEDS CODE
+	GB.CPU._r.H += 1
+
+	if GB.CPU._r.H == 0 {
+		GB.CPU._r.F.Z = 1
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if ((GB.CPU._r.H & 0b00001111 == 0b00000000) && (GB.CPU._r.H | 0b00010000 == 0b00010000)) {
+		GB.CPU._r.F.H = 1
+	}
+	
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -462,7 +531,18 @@ func DEC_0x2B_HL(GB *GAMEBOY) {
 // 0x2C INC L
 func INC_0x2C_L(GB *GAMEBOY) {
 	log.Println("0x2C INC L")
-	//NEEDS CODE
+	GB.CPU._r.L += 1
+
+	if GB.CPU._r.L == 0 {
+		GB.CPU._r.F.Z = 1
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if ((GB.CPU._r.L & 0b00001111 == 0b00000000) && (GB.CPU._r.L | 0b00010000 == 0b00010000)) {
+		GB.CPU._r.F.H = 1
+	}
+	
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -532,7 +612,7 @@ func LD_0x32_addrHL_A(GB *GAMEBOY) {
 // 0x33 INC SP
 func INC_0x33_SP(GB *GAMEBOY) {
 	log.Println("0x33 INC SP")
-	//NEEDS CODE
+	GB.CPU._r.SP += 1
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -622,7 +702,18 @@ func DEC_0x3B_SP(GB *GAMEBOY) {
 // 0x3C INC A
 func INC_0x3C_A(GB *GAMEBOY) {
 	log.Println("0x3C INC A")
-	//NEEDS CODE
+	GB.CPU._r.A += 1
+
+	if GB.CPU._r.A == 0 {
+		GB.CPU._r.F.Z = 1
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if ((GB.CPU._r.A & 0b00001111 == 0b00000000) && (GB.CPU._r.A | 0b00010000 == 0b00010000)) {
+		GB.CPU._r.F.H = 1
+	}
+	
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4

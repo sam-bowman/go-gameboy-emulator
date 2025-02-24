@@ -4,9 +4,16 @@ type CLOCK struct {
 	M, T uint8
 }
 
+type F_REGISTER struct {
+	Z uint8 //Zero
+	N uint8 //Subtraction
+	H uint8 //Half Carry
+	C uint8 //Carry
+}
+
 type REGISTER struct {
 	A uint8 //Accumulator
-	F uint8 //Flags
+	F F_REGISTER //Flags
 	//ZNHC0000
 	//Z = Zero Flag
 	//N = Subtract Flag
@@ -571,7 +578,10 @@ func reset(GB *GAMEBOY) {
 	GB.CPU._r.E = 0
 	GB.CPU._r.H = 0
 	GB.CPU._r.L = 0
-	GB.CPU._r.F = 0
+	GB.CPU._r.F.Z = 0
+	GB.CPU._r.F.N = 0
+	GB.CPU._r.F.H = 0
+	GB.CPU._r.F.C = 0
 	GB.CPU._r.PC = 0
 	GB.CPU._r.SP = 0
 	GB.CPU._r.M = 0
