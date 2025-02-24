@@ -144,12 +144,14 @@ func LD_0x08_addra16_SP(GB *GAMEBOY) {
 // 0x09 ADD HL_BC
 func ADD_0x09_HL_BC(GB *GAMEBOY) {
 	log.Println("0x09 ADD HL_BC")
-	combinedHL := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
-	combinedBC := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
-	combinedHL = combinedHL + combinedBC
-	GB.CPU._r.H = byte(combinedHL >> 8)
-	GB.CPU._r.L = byte(combinedHL & 0xFF)
+	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
+	combinedRight := uint16(GB.CPU._r.B)<<8 | uint16(GB.CPU._r.C)
+	combinedLeft = combinedLeft + combinedRight
+	GB.CPU._r.H = byte(combinedLeft >> 8)
+	GB.CPU._r.L = byte(combinedLeft & 0xFF)
 	//NEEDS CODE (FLAG HANDLING)
+	GB.CPU._r.F.N = 0
+
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -361,7 +363,14 @@ func JR_0x18_e8(GB *GAMEBOY) {
 // 0x19 ADD HL_DE
 func ADD_0x19_HL_DE(GB *GAMEBOY) {
 	log.Println("0x19 ADD HL_DE")
-	//NEEDS CODE
+	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
+	combinedRight := uint16(GB.CPU._r.D)<<8 | uint16(GB.CPU._r.E)
+	combinedLeft = combinedLeft + combinedRight
+	GB.CPU._r.H = byte(combinedLeft >> 8)
+	GB.CPU._r.L = byte(combinedLeft & 0xFF)
+	//NEEDS CODE (FLAG HANDLING)
+	GB.CPU._r.F.N = 0
+
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -588,7 +597,14 @@ func JR_0x28_Z_e8(GB *GAMEBOY) {
 // 0x29 ADD HL_HL
 func ADD_0x29_HL_HL(GB *GAMEBOY) {
 	log.Println("0x29 ADD HL_HL")
-	//NEEDS CODE
+	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
+	combinedRight := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
+	combinedLeft = combinedLeft + combinedRight
+	GB.CPU._r.H = byte(combinedLeft >> 8)
+	GB.CPU._r.L = byte(combinedLeft & 0xFF)
+	//NEEDS CODE (FLAG HANDLING)
+	GB.CPU._r.F.N = 0
+
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -782,7 +798,14 @@ func JR_0x38_C_e8(GB *GAMEBOY) {
 // 0x39 ADD HL_SP
 func ADD_0x39_HL_SP(GB *GAMEBOY) {
 	log.Println("0x39 ADD HL_SP")
-	//NEEDS CODE
+	combinedLeft := uint16(GB.CPU._r.H)<<8 | uint16(GB.CPU._r.L)
+	combinedRight := GB.CPU._r.SP
+	combinedLeft = combinedLeft + combinedRight
+	GB.CPU._r.H = byte(combinedLeft >> 8)
+	GB.CPU._r.L = byte(combinedLeft & 0xFF)
+	//NEEDS CODE (FLAG HANDLING)
+	GB.CPU._r.F.N = 0
+
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
