@@ -29,7 +29,7 @@ type Game struct {
 
 // Update function, called every frame.
 func (g *Game) Update() error {
-	// Game Logic.
+	g.GAMEBOY.CPU.exec(&g.GAMEBOY)
 	return nil
 }
 
