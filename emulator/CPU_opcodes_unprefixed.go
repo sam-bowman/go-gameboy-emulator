@@ -65,7 +65,7 @@ func LD_0x06_B_n8(GB *GAMEBOY) {
 
 // 0x07 RLCA
 func RLCA_0x07(GB *GAMEBOY) {
-	log.Println("0x07 RLCA ")
+	log.Println("0x07 RLCA")
 	//NEEDS CODE
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
@@ -125,7 +125,7 @@ func LD_0x0E_C_n8(GB *GAMEBOY) {
 
 // 0x0F RRCA
 func RRCA_0x0F(GB *GAMEBOY) {
-	log.Println("0x0F RRCA ")
+	log.Println("0x0F RRCA")
 	//NEEDS CODE
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
@@ -185,7 +185,7 @@ func LD_0x16_D_n8(GB *GAMEBOY) {
 
 // 0x17 RLA
 func RLA_0x17(GB *GAMEBOY) {
-	log.Println("0x17 RLA ")
+	log.Println("0x17 RLA")
 	//NEEDS CODE
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
