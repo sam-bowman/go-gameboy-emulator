@@ -2,6 +2,14 @@ package main
 
 import "log"
 
+//Common ------
+func REG_CLOCK_TIMINGS(GB *GAMEBOY, PC uint16, M uint8) {
+	//Set PC & Timings
+	GB.CPU._r.PC += PC
+	GB.CPU._r.M = M
+	GB.CPU._r.T = GB.CPU._r.M * 4
+}
+
 //Increments ------
 func INC_r8(GB *GAMEBOY, left uint8) uint8 {
 	log.Println("INC_r8")
@@ -26,9 +34,7 @@ func INC_r8(GB *GAMEBOY, left uint8) uint8 {
 	}
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 
 	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': '-'}
 	return result
@@ -42,9 +48,7 @@ func INC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 	combined += 1
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return byte(combined >> 8), byte(combined & 0xFF)
@@ -57,9 +61,7 @@ func INC_r16(GB *GAMEBOY, left uint16) uint16 {
 	result := left + 1
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return result
@@ -72,6 +74,7 @@ func DEC_r8(GB *GAMEBOY, left uint8) uint8 {
 	//Perform Operation
 	result := left - 1
 
+	//Set Flags
 	if GB.CPU._r.B == 0 {
 		GB.CPU._r.F.Z = 1
 	} else {
@@ -86,9 +89,8 @@ func DEC_r8(GB *GAMEBOY, left uint8) uint8 {
 		GB.CPU._r.F.H = 0
 	}
 
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 
 	//FLAGS AFFECTED : {'Z': 'Z', 'N': '1', 'H': 'H', 'C': '-'}
 	return result
@@ -102,9 +104,7 @@ func DEC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 	combined -= 1
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return byte(combined >> 8), byte(combined & 0xFF)
@@ -117,9 +117,7 @@ func DEC_r16(GB *GAMEBOY, left uint16) uint16 {
 	result := left - 1
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return result
@@ -155,9 +153,7 @@ func ADD_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	}
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 
 	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
 	return result
@@ -192,9 +188,7 @@ func ADD_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	}
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 2, 2)
 
 	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
 	return result
@@ -225,9 +219,7 @@ func ADD_r8r8_r8r8(GB *GAMEBOY, leftUpper uint8, leftLower uint8, rightUpper uin
 	}
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
 	return uint8(result >> 8), uint8(result & 0xFF)
@@ -257,9 +249,7 @@ func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (
 	}
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
 	return uint8(result >> 8), uint8(result & 0xFF)
@@ -274,9 +264,7 @@ func LD_r8r8_n16(GB *GAMEBOY) (uint8, uint8) {
 	lower := GB.MMU._rom[GB.CPU._r.PC+1]
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 3
-	GB.CPU._r.M = 3
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 3, 3)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return upper, lower
@@ -291,9 +279,7 @@ func LD_r16_n16(GB *GAMEBOY) uint16 {
 	combined := uint16(upper)<<8 | uint16(lower)
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 3
-	GB.CPU._r.M = 3
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 3, 3)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return combined
@@ -306,9 +292,7 @@ func LD_r8_n8(GB *GAMEBOY) uint8 {
 	result := GB.MMU._rom[GB.CPU._r.PC+1]
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 2, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return result
@@ -321,9 +305,7 @@ func LD_r8_r8(GB *GAMEBOY, right uint8) uint8 {
 	result := right
 
 	//Set PC & Timings
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return result

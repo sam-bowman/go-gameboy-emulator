@@ -20,10 +20,7 @@ import "log"
 // 0x00 NOP
 func NOP_0x00(GB *GAMEBOY) {
 	log.Println("0x00 NOP")
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 }
 
 // 0x01 LD BC_n16
