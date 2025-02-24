@@ -11,6 +11,12 @@ import "log"
 //opcode source: https://gbdev.io/gb-opcodes/optables/
 //interactive reference table: https://meganesu.github.io/generate-gb-opcodes/
 
+//0b10000000 = Z : Zero
+//0b01000000 = N : Subtraction
+//0b00100000 = H : Half Carry
+//0b00010000 = C : Carry
+//Letter means set as per the operation dictates, 1 means set, 0 means unset, - means unchanged.
+
 // 0x00 RLC B
 func CB_RLC_0x00_B(GB *GAMEBOY) {
 	log.Println("0x00 RLC B")
