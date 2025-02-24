@@ -603,7 +603,12 @@ func newCPU() *CPU {
 		E:  0,
 		H:  0,
 		L:  0,
-		F:  0,
+		F:  F_REGISTER{
+			Z: 0,
+			N: 0,
+			H: 0,
+			C: 0,
+		},
 		PC: 0,
 		SP: 0,
 		M:  0,
@@ -623,7 +628,7 @@ func newCPU() *CPU {
 	CPU._map[0x00] = CPU._ops.NOP_0x00
 	CPU._ops.LD_0x01_BC_n16 = LD_0x01_BC_n16
 	CPU._map[0x01] = CPU._ops.LD_0x01_BC_n16
-	CPU._ops.LD_0x02_BC_A = LD_0x02_BC_A
+	CPU._ops.LD_0x02_BC_A = LD_0x02_addrBC_A
 	CPU._map[0x02] = CPU._ops.LD_0x02_BC_A
 	CPU._ops.INC_0x03_BC = INC_0x03_BC
 	CPU._map[0x03] = CPU._ops.INC_0x03_BC
@@ -635,11 +640,11 @@ func newCPU() *CPU {
 	CPU._map[0x06] = CPU._ops.LD_0x06_B_n8
 	CPU._ops.RLCA_0x07 = RLCA_0x07
 	CPU._map[0x07] = CPU._ops.RLCA_0x07
-	CPU._ops.LD_0x08_a16_SP = LD_0x08_a16_SP
+	CPU._ops.LD_0x08_a16_SP = LD_0x08_addra16_SP
 	CPU._map[0x08] = CPU._ops.LD_0x08_a16_SP
 	CPU._ops.ADD_0x09_HL_BC = ADD_0x09_HL_BC
 	CPU._map[0x09] = CPU._ops.ADD_0x09_HL_BC
-	CPU._ops.LD_0x0A_A_BC = LD_0x0A_A_BC
+	CPU._ops.LD_0x0A_A_BC = LD_0x0A_A_addrBC
 	CPU._map[0x0A] = CPU._ops.LD_0x0A_A_BC
 	CPU._ops.DEC_0x0B_BC = DEC_0x0B_BC
 	CPU._map[0x0B] = CPU._ops.DEC_0x0B_BC
@@ -655,7 +660,7 @@ func newCPU() *CPU {
 	CPU._map[0x10] = CPU._ops.STOP_0x10_n8
 	CPU._ops.LD_0x11_DE_n16 = LD_0x11_DE_n16
 	CPU._map[0x11] = CPU._ops.LD_0x11_DE_n16
-	CPU._ops.LD_0x12_DE_A = LD_0x12_DE_A
+	CPU._ops.LD_0x12_DE_A = LD_0x12_addrDE_A
 	CPU._map[0x12] = CPU._ops.LD_0x12_DE_A
 	CPU._ops.INC_0x13_DE = INC_0x13_DE
 	CPU._map[0x13] = CPU._ops.INC_0x13_DE
@@ -671,7 +676,7 @@ func newCPU() *CPU {
 	CPU._map[0x18] = CPU._ops.JR_0x18_e8
 	CPU._ops.ADD_0x19_HL_DE = ADD_0x19_HL_DE
 	CPU._map[0x19] = CPU._ops.ADD_0x19_HL_DE
-	CPU._ops.LD_0x1A_A_DE = LD_0x1A_A_DE
+	CPU._ops.LD_0x1A_A_DE = LD_0x1A_A_addrDE
 	CPU._map[0x1A] = CPU._ops.LD_0x1A_A_DE
 	CPU._ops.DEC_0x1B_DE = DEC_0x1B_DE
 	CPU._map[0x1B] = CPU._ops.DEC_0x1B_DE
@@ -687,7 +692,7 @@ func newCPU() *CPU {
 	CPU._map[0x20] = CPU._ops.JR_0x20_NZ_e8
 	CPU._ops.LD_0x21_HL_n16 = LD_0x21_HL_n16
 	CPU._map[0x21] = CPU._ops.LD_0x21_HL_n16
-	CPU._ops.LD_0x22_HL_A = LD_0x22_HL_A
+	CPU._ops.LD_0x22_HL_A = LD_0x22_addrHL_A
 	CPU._map[0x22] = CPU._ops.LD_0x22_HL_A
 	CPU._ops.INC_0x23_HL = INC_0x23_HL
 	CPU._map[0x23] = CPU._ops.INC_0x23_HL
@@ -703,7 +708,7 @@ func newCPU() *CPU {
 	CPU._map[0x28] = CPU._ops.JR_0x28_Z_e8
 	CPU._ops.ADD_0x29_HL_HL = ADD_0x29_HL_HL
 	CPU._map[0x29] = CPU._ops.ADD_0x29_HL_HL
-	CPU._ops.LD_0x2A_A_HL = LD_0x2A_A_HL
+	CPU._ops.LD_0x2A_A_HL = LD_0x2A_A_addrHL
 	CPU._map[0x2A] = CPU._ops.LD_0x2A_A_HL
 	CPU._ops.DEC_0x2B_HL = DEC_0x2B_HL
 	CPU._map[0x2B] = CPU._ops.DEC_0x2B_HL
@@ -719,15 +724,15 @@ func newCPU() *CPU {
 	CPU._map[0x30] = CPU._ops.JR_0x30_NC_e8
 	CPU._ops.LD_0x31_SP_n16 = LD_0x31_SP_n16
 	CPU._map[0x31] = CPU._ops.LD_0x31_SP_n16
-	CPU._ops.LD_0x32_HL_A = LD_0x32_HL_A
+	CPU._ops.LD_0x32_HL_A = LD_0x32_addrHL_A
 	CPU._map[0x32] = CPU._ops.LD_0x32_HL_A
 	CPU._ops.INC_0x33_SP = INC_0x33_SP
 	CPU._map[0x33] = CPU._ops.INC_0x33_SP
-	CPU._ops.INC_0x34_HL = INC_0x34_HL
+	CPU._ops.INC_0x34_HL = INC_0x34_addrHL
 	CPU._map[0x34] = CPU._ops.INC_0x34_HL
-	CPU._ops.DEC_0x35_HL = DEC_0x35_HL
+	CPU._ops.DEC_0x35_HL = DEC_0x35_addrHL
 	CPU._map[0x35] = CPU._ops.DEC_0x35_HL
-	CPU._ops.LD_0x36_HL_n8 = LD_0x36_HL_n8
+	CPU._ops.LD_0x36_HL_n8 = LD_0x36_addrHL_n8
 	CPU._map[0x36] = CPU._ops.LD_0x36_HL_n8
 	CPU._ops.SCF_0x37 = SCF_0x37
 	CPU._map[0x37] = CPU._ops.SCF_0x37
@@ -735,7 +740,7 @@ func newCPU() *CPU {
 	CPU._map[0x38] = CPU._ops.JR_0x38_C_e8
 	CPU._ops.ADD_0x39_HL_SP = ADD_0x39_HL_SP
 	CPU._map[0x39] = CPU._ops.ADD_0x39_HL_SP
-	CPU._ops.LD_0x3A_A_HL = LD_0x3A_A_HL
+	CPU._ops.LD_0x3A_A_HL = LD_0x3A_A_addrHL
 	CPU._map[0x3A] = CPU._ops.LD_0x3A_A_HL
 	CPU._ops.DEC_0x3B_SP = DEC_0x3B_SP
 	CPU._map[0x3B] = CPU._ops.DEC_0x3B_SP
@@ -759,7 +764,7 @@ func newCPU() *CPU {
 	CPU._map[0x44] = CPU._ops.LD_0x44_B_H
 	CPU._ops.LD_0x45_B_L = LD_0x45_B_L
 	CPU._map[0x45] = CPU._ops.LD_0x45_B_L
-	CPU._ops.LD_0x46_B_HL = LD_0x46_B_HL
+	CPU._ops.LD_0x46_B_HL = LD_0x46_B_addrHL
 	CPU._map[0x46] = CPU._ops.LD_0x46_B_HL
 	CPU._ops.LD_0x47_B_A = LD_0x47_B_A
 	CPU._map[0x47] = CPU._ops.LD_0x47_B_A
@@ -775,7 +780,7 @@ func newCPU() *CPU {
 	CPU._map[0x4C] = CPU._ops.LD_0x4C_C_H
 	CPU._ops.LD_0x4D_C_L = LD_0x4D_C_L
 	CPU._map[0x4D] = CPU._ops.LD_0x4D_C_L
-	CPU._ops.LD_0x4E_C_HL = LD_0x4E_C_HL
+	CPU._ops.LD_0x4E_C_HL = LD_0x4E_C_addrHL
 	CPU._map[0x4E] = CPU._ops.LD_0x4E_C_HL
 	CPU._ops.LD_0x4F_C_A = LD_0x4F_C_A
 	CPU._map[0x4F] = CPU._ops.LD_0x4F_C_A
@@ -791,7 +796,7 @@ func newCPU() *CPU {
 	CPU._map[0x54] = CPU._ops.LD_0x54_D_H
 	CPU._ops.LD_0x55_D_L = LD_0x55_D_L
 	CPU._map[0x55] = CPU._ops.LD_0x55_D_L
-	CPU._ops.LD_0x56_D_HL = LD_0x56_D_HL
+	CPU._ops.LD_0x56_D_HL = LD_0x56_D_addrHL
 	CPU._map[0x56] = CPU._ops.LD_0x56_D_HL
 	CPU._ops.LD_0x57_D_A = LD_0x57_D_A
 	CPU._map[0x57] = CPU._ops.LD_0x57_D_A
@@ -807,7 +812,7 @@ func newCPU() *CPU {
 	CPU._map[0x5C] = CPU._ops.LD_0x5C_E_H
 	CPU._ops.LD_0x5D_E_L = LD_0x5D_E_L
 	CPU._map[0x5D] = CPU._ops.LD_0x5D_E_L
-	CPU._ops.LD_0x5E_E_HL = LD_0x5E_E_HL
+	CPU._ops.LD_0x5E_E_HL = LD_0x5E_E_addrHL
 	CPU._map[0x5E] = CPU._ops.LD_0x5E_E_HL
 	CPU._ops.LD_0x5F_E_A = LD_0x5F_E_A
 	CPU._map[0x5F] = CPU._ops.LD_0x5F_E_A
@@ -823,7 +828,7 @@ func newCPU() *CPU {
 	CPU._map[0x64] = CPU._ops.LD_0x64_H_H
 	CPU._ops.LD_0x65_H_L = LD_0x65_H_L
 	CPU._map[0x65] = CPU._ops.LD_0x65_H_L
-	CPU._ops.LD_0x66_H_HL = LD_0x66_H_HL
+	CPU._ops.LD_0x66_H_HL = LD_0x66_H_addrHL
 	CPU._map[0x66] = CPU._ops.LD_0x66_H_HL
 	CPU._ops.LD_0x67_H_A = LD_0x67_H_A
 	CPU._map[0x67] = CPU._ops.LD_0x67_H_A
@@ -839,25 +844,25 @@ func newCPU() *CPU {
 	CPU._map[0x6C] = CPU._ops.LD_0x6C_L_H
 	CPU._ops.LD_0x6D_L_L = LD_0x6D_L_L
 	CPU._map[0x6D] = CPU._ops.LD_0x6D_L_L
-	CPU._ops.LD_0x6E_L_HL = LD_0x6E_L_HL
+	CPU._ops.LD_0x6E_L_HL = LD_0x6E_L_addrHL
 	CPU._map[0x6E] = CPU._ops.LD_0x6E_L_HL
 	CPU._ops.LD_0x6F_L_A = LD_0x6F_L_A
 	CPU._map[0x6F] = CPU._ops.LD_0x6F_L_A
-	CPU._ops.LD_0x70_HL_B = LD_0x70_HL_B
+	CPU._ops.LD_0x70_HL_B = LD_0x70_addrHL_B
 	CPU._map[0x70] = CPU._ops.LD_0x70_HL_B
-	CPU._ops.LD_0x71_HL_C = LD_0x71_HL_C
+	CPU._ops.LD_0x71_HL_C = LD_0x71_addrHL_C
 	CPU._map[0x71] = CPU._ops.LD_0x71_HL_C
-	CPU._ops.LD_0x72_HL_D = LD_0x72_HL_D
+	CPU._ops.LD_0x72_HL_D = LD_0x72_addrHL_D
 	CPU._map[0x72] = CPU._ops.LD_0x72_HL_D
-	CPU._ops.LD_0x73_HL_E = LD_0x73_HL_E
+	CPU._ops.LD_0x73_HL_E = LD_0x73_addrHL_E
 	CPU._map[0x73] = CPU._ops.LD_0x73_HL_E
-	CPU._ops.LD_0x74_HL_H = LD_0x74_HL_H
+	CPU._ops.LD_0x74_HL_H = LD_0x74_addrHL_H
 	CPU._map[0x74] = CPU._ops.LD_0x74_HL_H
-	CPU._ops.LD_0x75_HL_L = LD_0x75_HL_L
+	CPU._ops.LD_0x75_HL_L = LD_0x75_addrHL_L
 	CPU._map[0x75] = CPU._ops.LD_0x75_HL_L
 	CPU._ops.HALT_0x76 = HALT_0x76
 	CPU._map[0x76] = CPU._ops.HALT_0x76
-	CPU._ops.LD_0x77_HL_A = LD_0x77_HL_A
+	CPU._ops.LD_0x77_HL_A = LD_0x77_addrHL_A
 	CPU._map[0x77] = CPU._ops.LD_0x77_HL_A
 	CPU._ops.LD_0x78_A_B = LD_0x78_A_B
 	CPU._map[0x78] = CPU._ops.LD_0x78_A_B
@@ -871,7 +876,7 @@ func newCPU() *CPU {
 	CPU._map[0x7C] = CPU._ops.LD_0x7C_A_H
 	CPU._ops.LD_0x7D_A_L = LD_0x7D_A_L
 	CPU._map[0x7D] = CPU._ops.LD_0x7D_A_L
-	CPU._ops.LD_0x7E_A_HL = LD_0x7E_A_HL
+	CPU._ops.LD_0x7E_A_HL = LD_0x7E_A_addrHL
 	CPU._map[0x7E] = CPU._ops.LD_0x7E_A_HL
 	CPU._ops.LD_0x7F_A_A = LD_0x7F_A_A
 	CPU._map[0x7F] = CPU._ops.LD_0x7F_A_A
@@ -887,7 +892,7 @@ func newCPU() *CPU {
 	CPU._map[0x84] = CPU._ops.ADD_0x84_A_H
 	CPU._ops.ADD_0x85_A_L = ADD_0x85_A_L
 	CPU._map[0x85] = CPU._ops.ADD_0x85_A_L
-	CPU._ops.ADD_0x86_A_HL = ADD_0x86_A_HL
+	CPU._ops.ADD_0x86_A_HL = ADD_0x86_A_addrHL
 	CPU._map[0x86] = CPU._ops.ADD_0x86_A_HL
 	CPU._ops.ADD_0x87_A_A = ADD_0x87_A_A
 	CPU._map[0x87] = CPU._ops.ADD_0x87_A_A
@@ -903,7 +908,7 @@ func newCPU() *CPU {
 	CPU._map[0x8C] = CPU._ops.ADC_0x8C_A_H
 	CPU._ops.ADC_0x8D_A_L = ADC_0x8D_A_L
 	CPU._map[0x8D] = CPU._ops.ADC_0x8D_A_L
-	CPU._ops.ADC_0x8E_A_HL = ADC_0x8E_A_HL
+	CPU._ops.ADC_0x8E_A_HL = ADC_0x8E_A_addrHL
 	CPU._map[0x8E] = CPU._ops.ADC_0x8E_A_HL
 	CPU._ops.ADC_0x8F_A_A = ADC_0x8F_A_A
 	CPU._map[0x8F] = CPU._ops.ADC_0x8F_A_A
@@ -919,7 +924,7 @@ func newCPU() *CPU {
 	CPU._map[0x94] = CPU._ops.SUB_0x94_A_H
 	CPU._ops.SUB_0x95_A_L = SUB_0x95_A_L
 	CPU._map[0x95] = CPU._ops.SUB_0x95_A_L
-	CPU._ops.SUB_0x96_A_HL = SUB_0x96_A_HL
+	CPU._ops.SUB_0x96_A_HL = SUB_0x96_A_addrHL
 	CPU._map[0x96] = CPU._ops.SUB_0x96_A_HL
 	CPU._ops.SUB_0x97_A_A = SUB_0x97_A_A
 	CPU._map[0x97] = CPU._ops.SUB_0x97_A_A
@@ -935,7 +940,7 @@ func newCPU() *CPU {
 	CPU._map[0x9C] = CPU._ops.SBC_0x9C_A_H
 	CPU._ops.SBC_0x9D_A_L = SBC_0x9D_A_L
 	CPU._map[0x9D] = CPU._ops.SBC_0x9D_A_L
-	CPU._ops.SBC_0x9E_A_HL = SBC_0x9E_A_HL
+	CPU._ops.SBC_0x9E_A_HL = SBC_0x9E_A_addrHL
 	CPU._map[0x9E] = CPU._ops.SBC_0x9E_A_HL
 	CPU._ops.SBC_0x9F_A_A = SBC_0x9F_A_A
 	CPU._map[0x9F] = CPU._ops.SBC_0x9F_A_A
@@ -951,7 +956,7 @@ func newCPU() *CPU {
 	CPU._map[0xA4] = CPU._ops.AND_0xA4_A_H
 	CPU._ops.AND_0xA5_A_L = AND_0xA5_A_L
 	CPU._map[0xA5] = CPU._ops.AND_0xA5_A_L
-	CPU._ops.AND_0xA6_A_HL = AND_0xA6_A_HL
+	CPU._ops.AND_0xA6_A_HL = AND_0xA6_A_addrHL
 	CPU._map[0xA6] = CPU._ops.AND_0xA6_A_HL
 	CPU._ops.AND_0xA7_A_A = AND_0xA7_A_A
 	CPU._map[0xA7] = CPU._ops.AND_0xA7_A_A
@@ -967,7 +972,7 @@ func newCPU() *CPU {
 	CPU._map[0xAC] = CPU._ops.XOR_0xAC_A_H
 	CPU._ops.XOR_0xAD_A_L = XOR_0xAD_A_L
 	CPU._map[0xAD] = CPU._ops.XOR_0xAD_A_L
-	CPU._ops.XOR_0xAE_A_HL = XOR_0xAE_A_HL
+	CPU._ops.XOR_0xAE_A_HL = XOR_0xAE_A_addrHL
 	CPU._map[0xAE] = CPU._ops.XOR_0xAE_A_HL
 	CPU._ops.XOR_0xAF_A_A = XOR_0xAF_A_A
 	CPU._map[0xAF] = CPU._ops.XOR_0xAF_A_A
@@ -983,7 +988,7 @@ func newCPU() *CPU {
 	CPU._map[0xB4] = CPU._ops.OR_0xB4_A_H
 	CPU._ops.OR_0xB5_A_L = OR_0xB5_A_L
 	CPU._map[0xB5] = CPU._ops.OR_0xB5_A_L
-	CPU._ops.OR_0xB6_A_HL = OR_0xB6_A_HL
+	CPU._ops.OR_0xB6_A_HL = OR_0xB6_A_addrHL
 	CPU._map[0xB6] = CPU._ops.OR_0xB6_A_HL
 	CPU._ops.OR_0xB7_A_A = OR_0xB7_A_A
 	CPU._map[0xB7] = CPU._ops.OR_0xB7_A_A
@@ -999,7 +1004,7 @@ func newCPU() *CPU {
 	CPU._map[0xBC] = CPU._ops.CP_0xBC_A_H
 	CPU._ops.CP_0xBD_A_L = CP_0xBD_A_L
 	CPU._map[0xBD] = CPU._ops.CP_0xBD_A_L
-	CPU._ops.CP_0xBE_A_HL = CP_0xBE_A_HL
+	CPU._ops.CP_0xBE_A_HL = CP_0xBE_A_addrHL
 	CPU._map[0xBE] = CPU._ops.CP_0xBE_A_HL
 	CPU._ops.CP_0xBF_A_A = CP_0xBF_A_A
 	CPU._map[0xBF] = CPU._ops.CP_0xBF_A_A
@@ -1067,11 +1072,11 @@ func newCPU() *CPU {
 	CPU._map[0xDE] = CPU._ops.SBC_0xDE_A_n8
 	CPU._ops.RST_0xDF_dollar18 = RST_0xDF_dollar18
 	CPU._map[0xDF] = CPU._ops.RST_0xDF_dollar18
-	CPU._ops.LDH_0xE0_a8_A = LDH_0xE0_a8_A
+	CPU._ops.LDH_0xE0_a8_A = LDH_0xE0_addra8_A
 	CPU._map[0xE0] = CPU._ops.LDH_0xE0_a8_A
 	CPU._ops.POP_0xE1_HL = POP_0xE1_HL
 	CPU._map[0xE1] = CPU._ops.POP_0xE1_HL
-	CPU._ops.LDH_0xE2_C_A = LDH_0xE2_C_A
+	CPU._ops.LDH_0xE2_C_A = LDH_0xE2_addrC_A
 	CPU._map[0xE2] = CPU._ops.LDH_0xE2_C_A
 	CPU._ops.ILLEGAL_E3_0xE3 = ILLEGAL_E3_0xE3
 	CPU._map[0xE3] = CPU._ops.ILLEGAL_E3_0xE3
@@ -1087,7 +1092,7 @@ func newCPU() *CPU {
 	CPU._map[0xE8] = CPU._ops.ADD_0xE8_SP_e8
 	CPU._ops.JP_0xE9_HL = JP_0xE9_HL
 	CPU._map[0xE9] = CPU._ops.JP_0xE9_HL
-	CPU._ops.LD_0xEA_a16_A = LD_0xEA_a16_A
+	CPU._ops.LD_0xEA_a16_A = LD_0xEA_addra16_A
 	CPU._map[0xEA] = CPU._ops.LD_0xEA_a16_A
 	CPU._ops.ILLEGAL_EB_0xEB = ILLEGAL_EB_0xEB
 	CPU._map[0xEB] = CPU._ops.ILLEGAL_EB_0xEB
@@ -1099,11 +1104,11 @@ func newCPU() *CPU {
 	CPU._map[0xEE] = CPU._ops.XOR_0xEE_A_n8
 	CPU._ops.RST_0xEF_dollar28 = RST_0xEF_dollar28
 	CPU._map[0xEF] = CPU._ops.RST_0xEF_dollar28
-	CPU._ops.LDH_0xF0_A_a8 = LDH_0xF0_A_a8
+	CPU._ops.LDH_0xF0_A_a8 = LDH_0xF0_A_addra8
 	CPU._map[0xF0] = CPU._ops.LDH_0xF0_A_a8
 	CPU._ops.POP_0xF1_AF = POP_0xF1_AF
 	CPU._map[0xF1] = CPU._ops.POP_0xF1_AF
-	CPU._ops.LDH_0xF2_A_C = LDH_0xF2_A_C
+	CPU._ops.LDH_0xF2_A_C = LDH_0xF2_A_addrC
 	CPU._map[0xF2] = CPU._ops.LDH_0xF2_A_C
 	CPU._ops.DI_0xF3 = DI_0xF3
 	CPU._map[0xF3] = CPU._ops.DI_0xF3
@@ -1119,7 +1124,7 @@ func newCPU() *CPU {
 	CPU._map[0xF8] = CPU._ops.LD_0xF8_HL_SP_e8
 	CPU._ops.LD_0xF9_SP_HL = LD_0xF9_SP_HL
 	CPU._map[0xF9] = CPU._ops.LD_0xF9_SP_HL
-	CPU._ops.LD_0xFA_A_a16 = LD_0xFA_A_a16
+	CPU._ops.LD_0xFA_A_a16 = LD_0xFA_A_addra16
 	CPU._map[0xFA] = CPU._ops.LD_0xFA_A_a16
 	CPU._ops.EI_0xFB = EI_0xFB
 	CPU._map[0xFB] = CPU._ops.EI_0xFB
@@ -1145,7 +1150,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x04] = CPU._ops.CB_RLC_0x04_H
 	CPU._ops.CB_RLC_0x05_L = CB_RLC_0x05_L
 	CPU._cbmap[0x05] = CPU._ops.CB_RLC_0x05_L
-	CPU._ops.CB_RLC_0x06_HL = CB_RLC_0x06_HL
+	CPU._ops.CB_RLC_0x06_HL = CB_RLC_0x06_addrHL
 	CPU._cbmap[0x06] = CPU._ops.CB_RLC_0x06_HL
 	CPU._ops.CB_RLC_0x07_A = CB_RLC_0x07_A
 	CPU._cbmap[0x07] = CPU._ops.CB_RLC_0x07_A
@@ -1161,7 +1166,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x0C] = CPU._ops.CB_RRC_0x0C_H
 	CPU._ops.CB_RRC_0x0D_L = CB_RRC_0x0D_L
 	CPU._cbmap[0x0D] = CPU._ops.CB_RRC_0x0D_L
-	CPU._ops.CB_RRC_0x0E_HL = CB_RRC_0x0E_HL
+	CPU._ops.CB_RRC_0x0E_HL = CB_RRC_0x0E_addrHL
 	CPU._cbmap[0x0E] = CPU._ops.CB_RRC_0x0E_HL
 	CPU._ops.CB_RRC_0x0F_A = CB_RRC_0x0F_A
 	CPU._cbmap[0x0F] = CPU._ops.CB_RRC_0x0F_A
@@ -1177,7 +1182,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x14] = CPU._ops.CB_RL_0x14_H
 	CPU._ops.CB_RL_0x15_L = CB_RL_0x15_L
 	CPU._cbmap[0x15] = CPU._ops.CB_RL_0x15_L
-	CPU._ops.CB_RL_0x16_HL = CB_RL_0x16_HL
+	CPU._ops.CB_RL_0x16_HL = CB_RL_0x16_addrHL
 	CPU._cbmap[0x16] = CPU._ops.CB_RL_0x16_HL
 	CPU._ops.CB_RL_0x17_A = CB_RL_0x17_A
 	CPU._cbmap[0x17] = CPU._ops.CB_RL_0x17_A
@@ -1193,7 +1198,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x1C] = CPU._ops.CB_RR_0x1C_H
 	CPU._ops.CB_RR_0x1D_L = CB_RR_0x1D_L
 	CPU._cbmap[0x1D] = CPU._ops.CB_RR_0x1D_L
-	CPU._ops.CB_RR_0x1E_HL = CB_RR_0x1E_HL
+	CPU._ops.CB_RR_0x1E_HL = CB_RR_0x1E_addrHL
 	CPU._cbmap[0x1E] = CPU._ops.CB_RR_0x1E_HL
 	CPU._ops.CB_RR_0x1F_A = CB_RR_0x1F_A
 	CPU._cbmap[0x1F] = CPU._ops.CB_RR_0x1F_A
@@ -1209,7 +1214,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x24] = CPU._ops.CB_SLA_0x24_H
 	CPU._ops.CB_SLA_0x25_L = CB_SLA_0x25_L
 	CPU._cbmap[0x25] = CPU._ops.CB_SLA_0x25_L
-	CPU._ops.CB_SLA_0x26_HL = CB_SLA_0x26_HL
+	CPU._ops.CB_SLA_0x26_HL = CB_SLA_0x26_addrHL
 	CPU._cbmap[0x26] = CPU._ops.CB_SLA_0x26_HL
 	CPU._ops.CB_SLA_0x27_A = CB_SLA_0x27_A
 	CPU._cbmap[0x27] = CPU._ops.CB_SLA_0x27_A
@@ -1225,7 +1230,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x2C] = CPU._ops.CB_SRA_0x2C_H
 	CPU._ops.CB_SRA_0x2D_L = CB_SRA_0x2D_L
 	CPU._cbmap[0x2D] = CPU._ops.CB_SRA_0x2D_L
-	CPU._ops.CB_SRA_0x2E_HL = CB_SRA_0x2E_HL
+	CPU._ops.CB_SRA_0x2E_HL = CB_SRA_0x2E_addrHL
 	CPU._cbmap[0x2E] = CPU._ops.CB_SRA_0x2E_HL
 	CPU._ops.CB_SRA_0x2F_A = CB_SRA_0x2F_A
 	CPU._cbmap[0x2F] = CPU._ops.CB_SRA_0x2F_A
@@ -1241,7 +1246,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x34] = CPU._ops.CB_SWAP_0x34_H
 	CPU._ops.CB_SWAP_0x35_L = CB_SWAP_0x35_L
 	CPU._cbmap[0x35] = CPU._ops.CB_SWAP_0x35_L
-	CPU._ops.CB_SWAP_0x36_HL = CB_SWAP_0x36_HL
+	CPU._ops.CB_SWAP_0x36_HL = CB_SWAP_0x36_addrHL
 	CPU._cbmap[0x36] = CPU._ops.CB_SWAP_0x36_HL
 	CPU._ops.CB_SWAP_0x37_A = CB_SWAP_0x37_A
 	CPU._cbmap[0x37] = CPU._ops.CB_SWAP_0x37_A
@@ -1257,7 +1262,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x3C] = CPU._ops.CB_SRL_0x3C_H
 	CPU._ops.CB_SRL_0x3D_L = CB_SRL_0x3D_L
 	CPU._cbmap[0x3D] = CPU._ops.CB_SRL_0x3D_L
-	CPU._ops.CB_SRL_0x3E_HL = CB_SRL_0x3E_HL
+	CPU._ops.CB_SRL_0x3E_HL = CB_SRL_0x3E_addrHL
 	CPU._cbmap[0x3E] = CPU._ops.CB_SRL_0x3E_HL
 	CPU._ops.CB_SRL_0x3F_A = CB_SRL_0x3F_A
 	CPU._cbmap[0x3F] = CPU._ops.CB_SRL_0x3F_A
@@ -1273,7 +1278,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x44] = CPU._ops.CB_BIT_0x44_0_H
 	CPU._ops.CB_BIT_0x45_0_L = CB_BIT_0x45_0_L
 	CPU._cbmap[0x45] = CPU._ops.CB_BIT_0x45_0_L
-	CPU._ops.CB_BIT_0x46_0_HL = CB_BIT_0x46_0_HL
+	CPU._ops.CB_BIT_0x46_0_HL = CB_BIT_0x46_0_addrHL
 	CPU._cbmap[0x46] = CPU._ops.CB_BIT_0x46_0_HL
 	CPU._ops.CB_BIT_0x47_0_A = CB_BIT_0x47_0_A
 	CPU._cbmap[0x47] = CPU._ops.CB_BIT_0x47_0_A
@@ -1289,7 +1294,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x4C] = CPU._ops.CB_BIT_0x4C_1_H
 	CPU._ops.CB_BIT_0x4D_1_L = CB_BIT_0x4D_1_L
 	CPU._cbmap[0x4D] = CPU._ops.CB_BIT_0x4D_1_L
-	CPU._ops.CB_BIT_0x4E_1_HL = CB_BIT_0x4E_1_HL
+	CPU._ops.CB_BIT_0x4E_1_HL = CB_BIT_0x4E_1_addrHL
 	CPU._cbmap[0x4E] = CPU._ops.CB_BIT_0x4E_1_HL
 	CPU._ops.CB_BIT_0x4F_1_A = CB_BIT_0x4F_1_A
 	CPU._cbmap[0x4F] = CPU._ops.CB_BIT_0x4F_1_A
@@ -1305,7 +1310,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x54] = CPU._ops.CB_BIT_0x54_2_H
 	CPU._ops.CB_BIT_0x55_2_L = CB_BIT_0x55_2_L
 	CPU._cbmap[0x55] = CPU._ops.CB_BIT_0x55_2_L
-	CPU._ops.CB_BIT_0x56_2_HL = CB_BIT_0x56_2_HL
+	CPU._ops.CB_BIT_0x56_2_HL = CB_BIT_0x56_2_addrHL
 	CPU._cbmap[0x56] = CPU._ops.CB_BIT_0x56_2_HL
 	CPU._ops.CB_BIT_0x57_2_A = CB_BIT_0x57_2_A
 	CPU._cbmap[0x57] = CPU._ops.CB_BIT_0x57_2_A
@@ -1321,7 +1326,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x5C] = CPU._ops.CB_BIT_0x5C_3_H
 	CPU._ops.CB_BIT_0x5D_3_L = CB_BIT_0x5D_3_L
 	CPU._cbmap[0x5D] = CPU._ops.CB_BIT_0x5D_3_L
-	CPU._ops.CB_BIT_0x5E_3_HL = CB_BIT_0x5E_3_HL
+	CPU._ops.CB_BIT_0x5E_3_HL = CB_BIT_0x5E_3_addrHL
 	CPU._cbmap[0x5E] = CPU._ops.CB_BIT_0x5E_3_HL
 	CPU._ops.CB_BIT_0x5F_3_A = CB_BIT_0x5F_3_A
 	CPU._cbmap[0x5F] = CPU._ops.CB_BIT_0x5F_3_A
@@ -1337,7 +1342,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x64] = CPU._ops.CB_BIT_0x64_4_H
 	CPU._ops.CB_BIT_0x65_4_L = CB_BIT_0x65_4_L
 	CPU._cbmap[0x65] = CPU._ops.CB_BIT_0x65_4_L
-	CPU._ops.CB_BIT_0x66_4_HL = CB_BIT_0x66_4_HL
+	CPU._ops.CB_BIT_0x66_4_HL = CB_BIT_0x66_4_addrHL
 	CPU._cbmap[0x66] = CPU._ops.CB_BIT_0x66_4_HL
 	CPU._ops.CB_BIT_0x67_4_A = CB_BIT_0x67_4_A
 	CPU._cbmap[0x67] = CPU._ops.CB_BIT_0x67_4_A
@@ -1353,7 +1358,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x6C] = CPU._ops.CB_BIT_0x6C_5_H
 	CPU._ops.CB_BIT_0x6D_5_L = CB_BIT_0x6D_5_L
 	CPU._cbmap[0x6D] = CPU._ops.CB_BIT_0x6D_5_L
-	CPU._ops.CB_BIT_0x6E_5_HL = CB_BIT_0x6E_5_HL
+	CPU._ops.CB_BIT_0x6E_5_HL = CB_BIT_0x6E_5_addrHL
 	CPU._cbmap[0x6E] = CPU._ops.CB_BIT_0x6E_5_HL
 	CPU._ops.CB_BIT_0x6F_5_A = CB_BIT_0x6F_5_A
 	CPU._cbmap[0x6F] = CPU._ops.CB_BIT_0x6F_5_A
@@ -1369,7 +1374,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x74] = CPU._ops.CB_BIT_0x74_6_H
 	CPU._ops.CB_BIT_0x75_6_L = CB_BIT_0x75_6_L
 	CPU._cbmap[0x75] = CPU._ops.CB_BIT_0x75_6_L
-	CPU._ops.CB_BIT_0x76_6_HL = CB_BIT_0x76_6_HL
+	CPU._ops.CB_BIT_0x76_6_HL = CB_BIT_0x76_6_addrHL
 	CPU._cbmap[0x76] = CPU._ops.CB_BIT_0x76_6_HL
 	CPU._ops.CB_BIT_0x77_6_A = CB_BIT_0x77_6_A
 	CPU._cbmap[0x77] = CPU._ops.CB_BIT_0x77_6_A
@@ -1385,7 +1390,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x7C] = CPU._ops.CB_BIT_0x7C_7_H
 	CPU._ops.CB_BIT_0x7D_7_L = CB_BIT_0x7D_7_L
 	CPU._cbmap[0x7D] = CPU._ops.CB_BIT_0x7D_7_L
-	CPU._ops.CB_BIT_0x7E_7_HL = CB_BIT_0x7E_7_HL
+	CPU._ops.CB_BIT_0x7E_7_HL = CB_BIT_0x7E_7_addrHL
 	CPU._cbmap[0x7E] = CPU._ops.CB_BIT_0x7E_7_HL
 	CPU._ops.CB_BIT_0x7F_7_A = CB_BIT_0x7F_7_A
 	CPU._cbmap[0x7F] = CPU._ops.CB_BIT_0x7F_7_A
@@ -1401,7 +1406,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x84] = CPU._ops.CB_RES_0x84_0_H
 	CPU._ops.CB_RES_0x85_0_L = CB_RES_0x85_0_L
 	CPU._cbmap[0x85] = CPU._ops.CB_RES_0x85_0_L
-	CPU._ops.CB_RES_0x86_0_HL = CB_RES_0x86_0_HL
+	CPU._ops.CB_RES_0x86_0_HL = CB_RES_0x86_0_addrHL
 	CPU._cbmap[0x86] = CPU._ops.CB_RES_0x86_0_HL
 	CPU._ops.CB_RES_0x87_0_A = CB_RES_0x87_0_A
 	CPU._cbmap[0x87] = CPU._ops.CB_RES_0x87_0_A
@@ -1417,7 +1422,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x8C] = CPU._ops.CB_RES_0x8C_1_H
 	CPU._ops.CB_RES_0x8D_1_L = CB_RES_0x8D_1_L
 	CPU._cbmap[0x8D] = CPU._ops.CB_RES_0x8D_1_L
-	CPU._ops.CB_RES_0x8E_1_HL = CB_RES_0x8E_1_HL
+	CPU._ops.CB_RES_0x8E_1_HL = CB_RES_0x8E_1_addrHL
 	CPU._cbmap[0x8E] = CPU._ops.CB_RES_0x8E_1_HL
 	CPU._ops.CB_RES_0x8F_1_A = CB_RES_0x8F_1_A
 	CPU._cbmap[0x8F] = CPU._ops.CB_RES_0x8F_1_A
@@ -1433,7 +1438,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x94] = CPU._ops.CB_RES_0x94_2_H
 	CPU._ops.CB_RES_0x95_2_L = CB_RES_0x95_2_L
 	CPU._cbmap[0x95] = CPU._ops.CB_RES_0x95_2_L
-	CPU._ops.CB_RES_0x96_2_HL = CB_RES_0x96_2_HL
+	CPU._ops.CB_RES_0x96_2_HL = CB_RES_0x96_2_addrHL
 	CPU._cbmap[0x96] = CPU._ops.CB_RES_0x96_2_HL
 	CPU._ops.CB_RES_0x97_2_A = CB_RES_0x97_2_A
 	CPU._cbmap[0x97] = CPU._ops.CB_RES_0x97_2_A
@@ -1449,7 +1454,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0x9C] = CPU._ops.CB_RES_0x9C_3_H
 	CPU._ops.CB_RES_0x9D_3_L = CB_RES_0x9D_3_L
 	CPU._cbmap[0x9D] = CPU._ops.CB_RES_0x9D_3_L
-	CPU._ops.CB_RES_0x9E_3_HL = CB_RES_0x9E_3_HL
+	CPU._ops.CB_RES_0x9E_3_HL = CB_RES_0x9E_3_addrHL
 	CPU._cbmap[0x9E] = CPU._ops.CB_RES_0x9E_3_HL
 	CPU._ops.CB_RES_0x9F_3_A = CB_RES_0x9F_3_A
 	CPU._cbmap[0x9F] = CPU._ops.CB_RES_0x9F_3_A
@@ -1465,7 +1470,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xA4] = CPU._ops.CB_RES_0xA4_4_H
 	CPU._ops.CB_RES_0xA5_4_L = CB_RES_0xA5_4_L
 	CPU._cbmap[0xA5] = CPU._ops.CB_RES_0xA5_4_L
-	CPU._ops.CB_RES_0xA6_4_HL = CB_RES_0xA6_4_HL
+	CPU._ops.CB_RES_0xA6_4_HL = CB_RES_0xA6_4_addrHL
 	CPU._cbmap[0xA6] = CPU._ops.CB_RES_0xA6_4_HL
 	CPU._ops.CB_RES_0xA7_4_A = CB_RES_0xA7_4_A
 	CPU._cbmap[0xA7] = CPU._ops.CB_RES_0xA7_4_A
@@ -1481,7 +1486,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xAC] = CPU._ops.CB_RES_0xAC_5_H
 	CPU._ops.CB_RES_0xAD_5_L = CB_RES_0xAD_5_L
 	CPU._cbmap[0xAD] = CPU._ops.CB_RES_0xAD_5_L
-	CPU._ops.CB_RES_0xAE_5_HL = CB_RES_0xAE_5_HL
+	CPU._ops.CB_RES_0xAE_5_HL = CB_RES_0xAE_5_addrHL
 	CPU._cbmap[0xAE] = CPU._ops.CB_RES_0xAE_5_HL
 	CPU._ops.CB_RES_0xAF_5_A = CB_RES_0xAF_5_A
 	CPU._cbmap[0xAF] = CPU._ops.CB_RES_0xAF_5_A
@@ -1497,7 +1502,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xB4] = CPU._ops.CB_RES_0xB4_6_H
 	CPU._ops.CB_RES_0xB5_6_L = CB_RES_0xB5_6_L
 	CPU._cbmap[0xB5] = CPU._ops.CB_RES_0xB5_6_L
-	CPU._ops.CB_RES_0xB6_6_HL = CB_RES_0xB6_6_HL
+	CPU._ops.CB_RES_0xB6_6_HL = CB_RES_0xB6_6_addrHL
 	CPU._cbmap[0xB6] = CPU._ops.CB_RES_0xB6_6_HL
 	CPU._ops.CB_RES_0xB7_6_A = CB_RES_0xB7_6_A
 	CPU._cbmap[0xB7] = CPU._ops.CB_RES_0xB7_6_A
@@ -1513,7 +1518,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xBC] = CPU._ops.CB_RES_0xBC_7_H
 	CPU._ops.CB_RES_0xBD_7_L = CB_RES_0xBD_7_L
 	CPU._cbmap[0xBD] = CPU._ops.CB_RES_0xBD_7_L
-	CPU._ops.CB_RES_0xBE_7_HL = CB_RES_0xBE_7_HL
+	CPU._ops.CB_RES_0xBE_7_HL = CB_RES_0xBE_7_addrHL
 	CPU._cbmap[0xBE] = CPU._ops.CB_RES_0xBE_7_HL
 	CPU._ops.CB_RES_0xBF_7_A = CB_RES_0xBF_7_A
 	CPU._cbmap[0xBF] = CPU._ops.CB_RES_0xBF_7_A
@@ -1529,7 +1534,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xC4] = CPU._ops.CB_SET_0xC4_0_H
 	CPU._ops.CB_SET_0xC5_0_L = CB_SET_0xC5_0_L
 	CPU._cbmap[0xC5] = CPU._ops.CB_SET_0xC5_0_L
-	CPU._ops.CB_SET_0xC6_0_HL = CB_SET_0xC6_0_HL
+	CPU._ops.CB_SET_0xC6_0_HL = CB_SET_0xC6_0_addrHL
 	CPU._cbmap[0xC6] = CPU._ops.CB_SET_0xC6_0_HL
 	CPU._ops.CB_SET_0xC7_0_A = CB_SET_0xC7_0_A
 	CPU._cbmap[0xC7] = CPU._ops.CB_SET_0xC7_0_A
@@ -1545,7 +1550,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xCC] = CPU._ops.CB_SET_0xCC_1_H
 	CPU._ops.CB_SET_0xCD_1_L = CB_SET_0xCD_1_L
 	CPU._cbmap[0xCD] = CPU._ops.CB_SET_0xCD_1_L
-	CPU._ops.CB_SET_0xCE_1_HL = CB_SET_0xCE_1_HL
+	CPU._ops.CB_SET_0xCE_1_HL = CB_SET_0xCE_1_addrHL
 	CPU._cbmap[0xCE] = CPU._ops.CB_SET_0xCE_1_HL
 	CPU._ops.CB_SET_0xCF_1_A = CB_SET_0xCF_1_A
 	CPU._cbmap[0xCF] = CPU._ops.CB_SET_0xCF_1_A
@@ -1561,7 +1566,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xD4] = CPU._ops.CB_SET_0xD4_2_H
 	CPU._ops.CB_SET_0xD5_2_L = CB_SET_0xD5_2_L
 	CPU._cbmap[0xD5] = CPU._ops.CB_SET_0xD5_2_L
-	CPU._ops.CB_SET_0xD6_2_HL = CB_SET_0xD6_2_HL
+	CPU._ops.CB_SET_0xD6_2_HL = CB_SET_0xD6_2_addrHL
 	CPU._cbmap[0xD6] = CPU._ops.CB_SET_0xD6_2_HL
 	CPU._ops.CB_SET_0xD7_2_A = CB_SET_0xD7_2_A
 	CPU._cbmap[0xD7] = CPU._ops.CB_SET_0xD7_2_A
@@ -1577,7 +1582,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xDC] = CPU._ops.CB_SET_0xDC_3_H
 	CPU._ops.CB_SET_0xDD_3_L = CB_SET_0xDD_3_L
 	CPU._cbmap[0xDD] = CPU._ops.CB_SET_0xDD_3_L
-	CPU._ops.CB_SET_0xDE_3_HL = CB_SET_0xDE_3_HL
+	CPU._ops.CB_SET_0xDE_3_HL = CB_SET_0xDE_3_addrHL
 	CPU._cbmap[0xDE] = CPU._ops.CB_SET_0xDE_3_HL
 	CPU._ops.CB_SET_0xDF_3_A = CB_SET_0xDF_3_A
 	CPU._cbmap[0xDF] = CPU._ops.CB_SET_0xDF_3_A
@@ -1593,7 +1598,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xE4] = CPU._ops.CB_SET_0xE4_4_H
 	CPU._ops.CB_SET_0xE5_4_L = CB_SET_0xE5_4_L
 	CPU._cbmap[0xE5] = CPU._ops.CB_SET_0xE5_4_L
-	CPU._ops.CB_SET_0xE6_4_HL = CB_SET_0xE6_4_HL
+	CPU._ops.CB_SET_0xE6_4_HL = CB_SET_0xE6_4_addrHL
 	CPU._cbmap[0xE6] = CPU._ops.CB_SET_0xE6_4_HL
 	CPU._ops.CB_SET_0xE7_4_A = CB_SET_0xE7_4_A
 	CPU._cbmap[0xE7] = CPU._ops.CB_SET_0xE7_4_A
@@ -1609,7 +1614,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xEC] = CPU._ops.CB_SET_0xEC_5_H
 	CPU._ops.CB_SET_0xED_5_L = CB_SET_0xED_5_L
 	CPU._cbmap[0xED] = CPU._ops.CB_SET_0xED_5_L
-	CPU._ops.CB_SET_0xEE_5_HL = CB_SET_0xEE_5_HL
+	CPU._ops.CB_SET_0xEE_5_HL = CB_SET_0xEE_5_addrHL
 	CPU._cbmap[0xEE] = CPU._ops.CB_SET_0xEE_5_HL
 	CPU._ops.CB_SET_0xEF_5_A = CB_SET_0xEF_5_A
 	CPU._cbmap[0xEF] = CPU._ops.CB_SET_0xEF_5_A
@@ -1625,7 +1630,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xF4] = CPU._ops.CB_SET_0xF4_6_H
 	CPU._ops.CB_SET_0xF5_6_L = CB_SET_0xF5_6_L
 	CPU._cbmap[0xF5] = CPU._ops.CB_SET_0xF5_6_L
-	CPU._ops.CB_SET_0xF6_6_HL = CB_SET_0xF6_6_HL
+	CPU._ops.CB_SET_0xF6_6_HL = CB_SET_0xF6_6_addrHL
 	CPU._cbmap[0xF6] = CPU._ops.CB_SET_0xF6_6_HL
 	CPU._ops.CB_SET_0xF7_6_A = CB_SET_0xF7_6_A
 	CPU._cbmap[0xF7] = CPU._ops.CB_SET_0xF7_6_A
@@ -1641,7 +1646,7 @@ func newCPU() *CPU {
 	CPU._cbmap[0xFC] = CPU._ops.CB_SET_0xFC_7_H
 	CPU._ops.CB_SET_0xFD_7_L = CB_SET_0xFD_7_L
 	CPU._cbmap[0xFD] = CPU._ops.CB_SET_0xFD_7_L
-	CPU._ops.CB_SET_0xFE_7_HL = CB_SET_0xFE_7_HL
+	CPU._ops.CB_SET_0xFE_7_HL = CB_SET_0xFE_7_addrHL
 	CPU._cbmap[0xFE] = CPU._ops.CB_SET_0xFE_7_HL
 	CPU._ops.CB_SET_0xFF_7_A = CB_SET_0xFF_7_A
 	CPU._cbmap[0xFF] = CPU._ops.CB_SET_0xFF_7_A
