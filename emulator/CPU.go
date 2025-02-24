@@ -14,12 +14,6 @@ type F_REGISTER struct {
 type REGISTER struct {
 	A uint8 //Accumulator
 	F F_REGISTER //Flags
-	//ZNHC0000
-	//Z = Zero Flag
-	//N = Subtract Flag
-	//H = Half Carry Flag
-	//C = Carry Flag
-	//0 = Never used, always 0.
 
 	B, C uint8
 	D, E uint8
