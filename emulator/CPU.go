@@ -578,8 +578,8 @@ func reset(GB *GAMEBOY) {
 	GB.CPU._r.F.C = 0
 	GB.CPU._r.PC = 0
 	GB.CPU._r.SP = 0
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = 1
+	GB.CPU._r.M = 0
+	GB.CPU._r.T = 0
 
 	// Reset Clock
 	GB.CPU._c.M = 0
