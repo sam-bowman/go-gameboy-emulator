@@ -7,6 +7,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
+var gbResWidth = 160
+var gbResHeight = 144
+var gbRenderScale = 4
+
 // GAMEBOY struct, all emulation is handled by this.
 type GAMEBOY struct {
 	CPU *CPU
@@ -41,13 +45,13 @@ func (g *Game) Draw(screen *ebiten.Image) {
 
 // Layout function, called when the window is resized.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return 160, 144
+	return gbResWidth, gbResHeight
 }
 
 // Main function, called when the program starts.
 func main() {
 	// Initialize Ebiten
-	ebiten.SetWindowSize(160, 144)
+	ebiten.SetWindowSize(gbResWidth*gbRenderScale, gbResHeight*gbRenderScale)
 	ebiten.SetWindowTitle("Hello, World!")
 	game := &Game{}
 
