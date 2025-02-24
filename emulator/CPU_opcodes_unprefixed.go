@@ -63,6 +63,7 @@ func INC_0x03_BC(GB *GAMEBOY) {
 // 0x04 INC B
 func INC_0x04_B(GB *GAMEBOY) {
 	log.Println("0x04 INC B")
+	original := GB.CPU._r.B
 	GB.CPU._r.B += 1
 
 	if GB.CPU._r.B == 0 {
@@ -73,7 +74,7 @@ func INC_0x04_B(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 0
 
-	if (GB.CPU._r.B&0b00001111 == 0b00000000) && (GB.CPU._r.B|0b00010000 == 0b00010000) {
+	if original&0x0F == 0x0F && original&0xFF != 0xFF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -98,7 +99,7 @@ func DEC_0x05_B(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 1
 
-	if (GB.CPU._r.B&0b00001111 == 0b00001111) && (GB.CPU._r.B&0b00010000 != 0b00010000) {
+	if GB.CPU._r.B&0x0F == 0x0F {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -193,6 +194,7 @@ func DEC_0x0B_BC(GB *GAMEBOY) {
 // 0x0C INC C
 func INC_0x0C_C(GB *GAMEBOY) {
 	log.Println("0x0C INC C")
+	original := GB.CPU._r.C
 	GB.CPU._r.C += 1
 
 	if GB.CPU._r.C == 0 {
@@ -203,7 +205,7 @@ func INC_0x0C_C(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 0
 
-	if (GB.CPU._r.C&0b00001111 == 0b00000000) && (GB.CPU._r.C|0b00010000 == 0b00010000) {
+	if original&0x0F == 0x0F && original&0xFF != 0xFF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -218,7 +220,22 @@ func INC_0x0C_C(GB *GAMEBOY) {
 // 0x0D DEC C
 func DEC_0x0D_C(GB *GAMEBOY) {
 	log.Println("0x0D DEC C")
-	//NEEDS CODE
+	GB.CPU._r.C -= 1
+
+	if GB.CPU._r.C == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+
+	GB.CPU._r.F.N = 1
+
+	if GB.CPU._r.C&0x0F == 0x0F {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -292,6 +309,7 @@ func INC_0x13_DE(GB *GAMEBOY) {
 // 0x14 INC D
 func INC_0x14_D(GB *GAMEBOY) {
 	log.Println("0x14 INC D")
+	original := GB.CPU._r.D
 	GB.CPU._r.D += 1
 
 	if GB.CPU._r.D == 0 {
@@ -302,7 +320,7 @@ func INC_0x14_D(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 0
 
-	if (GB.CPU._r.D&0b00001111 == 0b00000000) && (GB.CPU._r.D|0b00010000 == 0b00010000) {
+	if original&0x0F == 0x0F && original&0xFF != 0xFF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -327,7 +345,7 @@ func DEC_0x15_D(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 1
 
-	if (GB.CPU._r.D&0b00001111 == 0b00001111) && (GB.CPU._r.D&0b00010000 != 0b00010000) {
+	if GB.CPU._r.D&0x0F == 0x0F {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -421,6 +439,7 @@ func DEC_0x1B_DE(GB *GAMEBOY) {
 // 0x1C INC E
 func INC_0x1C_E(GB *GAMEBOY) {
 	log.Println("0x1C INC E")
+	original := GB.CPU._r.E
 	GB.CPU._r.E += 1
 
 	if GB.CPU._r.E == 0 {
@@ -431,7 +450,7 @@ func INC_0x1C_E(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 0
 
-	if (GB.CPU._r.E&0b00001111 == 0b00000000) && (GB.CPU._r.E|0b00010000 == 0b00010000) {
+	if original&0x0F == 0x0F && original&0xFF != 0xFF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -456,7 +475,7 @@ func DEC_0x1D_E(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 1
 
-	if (GB.CPU._r.E&0b00001111 == 0b00001111) && (GB.CPU._r.E&0b00010000 != 0b00010000) {
+	if GB.CPU._r.E&0x0F == 0x0F {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -535,6 +554,7 @@ func INC_0x23_HL(GB *GAMEBOY) {
 // 0x24 INC H
 func INC_0x24_H(GB *GAMEBOY) {
 	log.Println("0x24 INC H")
+	original := GB.CPU._r.H
 	GB.CPU._r.H += 1
 
 	if GB.CPU._r.H == 0 {
@@ -545,7 +565,7 @@ func INC_0x24_H(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 0
 
-	if (GB.CPU._r.H&0b00001111 == 0b00000000) && (GB.CPU._r.H|0b00010000 == 0b00010000) {
+	if original&0x0F == 0x0F && original&0xFF != 0xFF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -570,7 +590,7 @@ func DEC_0x25_H(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 1
 
-	if (GB.CPU._r.H&0b00001111 == 0b00001111) && (GB.CPU._r.H&0b00010000 != 0b00010000) {
+	if GB.CPU._r.H&0x0F == 0x0F {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -664,6 +684,7 @@ func DEC_0x2B_HL(GB *GAMEBOY) {
 // 0x2C INC L
 func INC_0x2C_L(GB *GAMEBOY) {
 	log.Println("0x2C INC L")
+	original := GB.CPU._r.L
 	GB.CPU._r.L += 1
 
 	if GB.CPU._r.L == 0 {
@@ -674,7 +695,7 @@ func INC_0x2C_L(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 0
 
-	if (GB.CPU._r.L&0b00001111 == 0b00000000) && (GB.CPU._r.L|0b00010000 == 0b00010000) {
+	if original&0x0F == 0x0F && original&0xFF != 0xFF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -699,7 +720,7 @@ func DEC_0x2D_L(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 1
 
-	if (GB.CPU._r.L&0b00001111 == 0b00001111) && (GB.CPU._r.L&0b00010000 != 0b00010000) {
+	if GB.CPU._r.L&0x0F == 0x0F {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -871,6 +892,7 @@ func DEC_0x3B_SP(GB *GAMEBOY) {
 // 0x3C INC A
 func INC_0x3C_A(GB *GAMEBOY) {
 	log.Println("0x3C INC A")
+	original := GB.CPU._r.A
 	GB.CPU._r.A += 1
 
 	if GB.CPU._r.A == 0 {
@@ -881,7 +903,7 @@ func INC_0x3C_A(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 0
 
-	if (GB.CPU._r.A&0b00001111 == 0b00000000) && (GB.CPU._r.A|0b00010000 == 0b00010000) {
+	if original&0x0F == 0x0F && original&0xFF != 0xFF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -906,7 +928,7 @@ func DEC_0x3D_A(GB *GAMEBOY) {
 
 	GB.CPU._r.F.N = 1
 
-	if (GB.CPU._r.A&0b00001111 == 0b00001111) && (GB.CPU._r.A&0b00010000 != 0b00010000) {
+	if GB.CPU._r.A&0x0F == 0x0F {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -1581,7 +1603,27 @@ func LD_0x7F_A_A(GB *GAMEBOY) {
 // 0x80 ADD A_B
 func ADD_0x80_A_B(GB *GAMEBOY) {
 	log.Println("0x80 ADD A_B")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.CPU._r.B
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -1591,7 +1633,27 @@ func ADD_0x80_A_B(GB *GAMEBOY) {
 // 0x81 ADD A_C
 func ADD_0x81_A_C(GB *GAMEBOY) {
 	log.Println("0x81 ADD A_C")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.CPU._r.C
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -1601,7 +1663,27 @@ func ADD_0x81_A_C(GB *GAMEBOY) {
 // 0x82 ADD A_D
 func ADD_0x82_A_D(GB *GAMEBOY) {
 	log.Println("0x82 ADD A_D")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.CPU._r.D
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -1611,7 +1693,27 @@ func ADD_0x82_A_D(GB *GAMEBOY) {
 // 0x83 ADD A_E
 func ADD_0x83_A_E(GB *GAMEBOY) {
 	log.Println("0x83 ADD A_E")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.CPU._r.E
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -1621,7 +1723,27 @@ func ADD_0x83_A_E(GB *GAMEBOY) {
 // 0x84 ADD A_H
 func ADD_0x84_A_H(GB *GAMEBOY) {
 	log.Println("0x84 ADD A_H")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.CPU._r.H
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -1631,7 +1753,27 @@ func ADD_0x84_A_H(GB *GAMEBOY) {
 // 0x85 ADD A_L
 func ADD_0x85_A_L(GB *GAMEBOY) {
 	log.Println("0x85 ADD A_L")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.CPU._r.L
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -1651,7 +1793,27 @@ func ADD_0x86_A_addrHL(GB *GAMEBOY) {
 // 0x87 ADD A_A
 func ADD_0x87_A_A(GB *GAMEBOY) {
 	log.Println("0x87 ADD A_A")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.CPU._r.A
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 1
 	GB.CPU._r.M = 1
 	GB.CPU._r.T = GB.CPU._r.M * 4
@@ -2281,7 +2443,27 @@ func PUSH_0xC5_BC(GB *GAMEBOY) {
 // 0xC6 ADD A_n8
 func ADD_0xC6_A_n8(GB *GAMEBOY) {
 	log.Println("0xC6 ADD A_n8")
-	//NEEDS CODE
+	left := GB.CPU._r.A
+	right := GB.MMU._rom[GB.CPU._r.PC+1]
+	result := left + right
+	result16 := uint16(left) + uint16(left)
+	GB.CPU._r.A = result
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+	GB.CPU._r.F.N = 0
+	if (((left & 0xF) + (right & 0xF)) & 0x10) == 0x10 {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+	if result16 >= 0x100 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
 	GB.CPU._r.PC += 2
 	GB.CPU._r.M = 2
 	GB.CPU._r.T = GB.CPU._r.M * 4
