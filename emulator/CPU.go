@@ -605,8 +605,8 @@ func newCPU() *CPU {
 		},
 		PC: 0,
 		SP: 0,
-		M:  1,
-		T:  1,
+		M:  0,
+		T:  0,
 	}
 
 	CPU._c = CLOCK{

@@ -36,10 +36,14 @@ func (g *Game) Update() error {
 	if g.GAMEBOY.CPU._r.T == 0 && g.GAMEBOY.CPU._r.M == 0 {
 		g.GAMEBOY.CPU.exec(&g.GAMEBOY)
 	} else {
+		//Reduce Register Clock
 		g.GAMEBOY.CPU._r.T -= 1
-		g.GAMEBOY.CPU._c.T += 1
 		if g.GAMEBOY.CPU._r.T%4 == 0 {
 			g.GAMEBOY.CPU._r.M -= 1
+		}
+		//Increase Clock
+		g.GAMEBOY.CPU._c.T += 1
+		if g.GAMEBOY.CPU._c.T%4 == 0 {
 			g.GAMEBOY.CPU._c.M += 1
 		}
 	}

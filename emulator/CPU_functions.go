@@ -7,7 +7,7 @@ func REG_CLOCK_TIMINGS(GB *GAMEBOY, PC uint16, M uint8) {
 	//Set PC & Timings
 	GB.CPU._r.PC += PC
 	GB.CPU._r.M = M
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	GB.CPU._r.T = M * 4
 }
 
 //Increments ------
