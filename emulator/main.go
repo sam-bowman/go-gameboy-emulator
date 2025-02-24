@@ -23,13 +23,14 @@ func newGameboy() *GAMEBOY {
 
 // Game struct, used by ebiten to render the game.
 type Game struct {
-	count int
+	count   int
 	GAMEBOY GAMEBOY
 }
 
 // Update function, called every frame.
 func (g *Game) Update() error {
 	g.GAMEBOY.CPU.exec(&g.GAMEBOY)
+	log.Println(g.GAMEBOY.CPU._r)
 	return nil
 }
 
