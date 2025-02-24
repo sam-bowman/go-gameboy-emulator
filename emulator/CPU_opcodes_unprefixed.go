@@ -1004,61 +1004,37 @@ func ADD_0x87_A_A(GB *GAMEBOY) {
 // 0x88 ADC A_B
 func ADC_0x88_A_B(GB *GAMEBOY) {
 	log.Println("0x88 ADC A_B")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_r8(GB, GB.CPU._r.A, GB.CPU._r.B)
 }
 
 // 0x89 ADC A_C
 func ADC_0x89_A_C(GB *GAMEBOY) {
 	log.Println("0x89 ADC A_C")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_r8(GB, GB.CPU._r.A, GB.CPU._r.C)
 }
 
 // 0x8A ADC A_D
 func ADC_0x8A_A_D(GB *GAMEBOY) {
 	log.Println("0x8A ADC A_D")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_r8(GB, GB.CPU._r.A, GB.CPU._r.D)
 }
 
 // 0x8B ADC A_E
 func ADC_0x8B_A_E(GB *GAMEBOY) {
 	log.Println("0x8B ADC A_E")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_r8(GB, GB.CPU._r.A, GB.CPU._r.E)
 }
 
 // 0x8C ADC A_H
 func ADC_0x8C_A_H(GB *GAMEBOY) {
 	log.Println("0x8C ADC A_H")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_r8(GB, GB.CPU._r.A, GB.CPU._r.H)
 }
 
 // 0x8D ADC A_L
 func ADC_0x8D_A_L(GB *GAMEBOY) {
 	log.Println("0x8D ADC A_L")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_r8(GB, GB.CPU._r.A, GB.CPU._r.L)
 }
 
 // 0x8E ADC A_addrHL
@@ -1074,11 +1050,7 @@ func ADC_0x8E_A_addrHL(GB *GAMEBOY) {
 // 0x8F ADC A_A
 func ADC_0x8F_A_A(GB *GAMEBOY) {
 	log.Println("0x8F ADC A_A")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_r8(GB, GB.CPU._r.A, GB.CPU._r.A)
 }
 
 // 0x90 SUB A_B
