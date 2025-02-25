@@ -686,7 +686,7 @@ func newCPU() *CPU {
 	CPU._map[0x20] = CPU._ops.JR_0x20_NZ_e8
 	CPU._ops.LD_0x21_HL_n16 = LD_0x21_HL_n16
 	CPU._map[0x21] = CPU._ops.LD_0x21_HL_n16
-	CPU._ops.LD_0x22_HL_A = LD_0x22_addrHL_A
+	CPU._ops.LD_0x22_HL_A = LD_0x22_addrHLi_A
 	CPU._map[0x22] = CPU._ops.LD_0x22_HL_A
 	CPU._ops.INC_0x23_HL = INC_0x23_HL
 	CPU._map[0x23] = CPU._ops.INC_0x23_HL
@@ -702,7 +702,7 @@ func newCPU() *CPU {
 	CPU._map[0x28] = CPU._ops.JR_0x28_Z_e8
 	CPU._ops.ADD_0x29_HL_HL = ADD_0x29_HL_HL
 	CPU._map[0x29] = CPU._ops.ADD_0x29_HL_HL
-	CPU._ops.LD_0x2A_A_HL = LD_0x2A_A_addrHL
+	CPU._ops.LD_0x2A_A_HL = LD_0x2A_A_addrHLi
 	CPU._map[0x2A] = CPU._ops.LD_0x2A_A_HL
 	CPU._ops.DEC_0x2B_HL = DEC_0x2B_HL
 	CPU._map[0x2B] = CPU._ops.DEC_0x2B_HL
@@ -718,7 +718,7 @@ func newCPU() *CPU {
 	CPU._map[0x30] = CPU._ops.JR_0x30_NC_e8
 	CPU._ops.LD_0x31_SP_n16 = LD_0x31_SP_n16
 	CPU._map[0x31] = CPU._ops.LD_0x31_SP_n16
-	CPU._ops.LD_0x32_HL_A = LD_0x32_addrHL_A
+	CPU._ops.LD_0x32_HL_A = LD_0x32_addrHLi_A
 	CPU._map[0x32] = CPU._ops.LD_0x32_HL_A
 	CPU._ops.INC_0x33_SP = INC_0x33_SP
 	CPU._map[0x33] = CPU._ops.INC_0x33_SP
@@ -734,7 +734,7 @@ func newCPU() *CPU {
 	CPU._map[0x38] = CPU._ops.JR_0x38_C_e8
 	CPU._ops.ADD_0x39_HL_SP = ADD_0x39_HL_SP
 	CPU._map[0x39] = CPU._ops.ADD_0x39_HL_SP
-	CPU._ops.LD_0x3A_A_HL = LD_0x3A_A_addrHL
+	CPU._ops.LD_0x3A_A_HL = LD_0x3A_A_addrHLi
 	CPU._map[0x3A] = CPU._ops.LD_0x3A_A_HL
 	CPU._ops.DEC_0x3B_SP = DEC_0x3B_SP
 	CPU._map[0x3B] = CPU._ops.DEC_0x3B_SP

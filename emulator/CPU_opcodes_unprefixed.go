@@ -270,7 +270,7 @@ func LD_0x21_HL_n16(GB *GAMEBOY) {
 }
 
 // 0x22 LD addrHL_A
-func LD_0x22_addrHL_A(GB *GAMEBOY) {
+func LD_0x22_addrHLi_A(GB *GAMEBOY) {
 	log.Println("0x22 LD addrHL_A")
 	//NEEDS CODE - ADDR
 	GB.CPU._r.PC += 1
@@ -330,7 +330,7 @@ func ADD_0x29_HL_HL(GB *GAMEBOY) {
 }
 
 // 0x2A LD A_addrHL
-func LD_0x2A_A_addrHL(GB *GAMEBOY) {
+func LD_0x2A_A_addrHLi(GB *GAMEBOY) {
 	log.Println("0x2A LD A_addrHL")
 	//NEEDS CODE - ADDR
 	GB.CPU._r.PC += 1
@@ -390,7 +390,7 @@ func LD_0x31_SP_n16(GB *GAMEBOY) {
 }
 
 // 0x32 LD addrHL_A
-func LD_0x32_addrHL_A(GB *GAMEBOY) {
+func LD_0x32_addrHLi_A(GB *GAMEBOY) {
 	log.Println("0x32 LD addrHL_A")
 	//NEEDS CODE - ADDR
 	GB.CPU._r.PC += 1
@@ -462,7 +462,7 @@ func ADD_0x39_HL_SP(GB *GAMEBOY) {
 }
 
 // 0x3A LD A_addrHL
-func LD_0x3A_A_addrHL(GB *GAMEBOY) {
+func LD_0x3A_A_addrHLi(GB *GAMEBOY) {
 	log.Println("0x3A LD A_addrHL")
 	//NEEDS CODE - ADDR
 	GB.CPU._r.PC += 1
