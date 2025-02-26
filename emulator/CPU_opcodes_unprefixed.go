@@ -375,21 +375,13 @@ func INC_0x33_SP(GB *GAMEBOY) {
 // 0x34 INC addrHL
 func INC_0x34_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x34 INC addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 3
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': '-'}
+	INC_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x35 DEC addrHL
 func DEC_0x35_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x35 DEC addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 3
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '1', 'H': 'H', 'C': '-'}
+	DEC_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x36 LD addrHL_n8

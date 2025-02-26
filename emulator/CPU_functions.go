@@ -57,6 +57,38 @@ func INC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 	return byte(combined >> 8), byte(combined & 0xFF)
 }
 
+//INC value ad address of 2x 8-bit register (as 16 bit)
+func INC_addrr8r8(GB *GAMEBOY, upper uint8, lower uint8) {
+	GB.InfoLogger.Println("INC_addrr8r8")
+
+	//Perform Operation
+	addr := uint16(upper)<<8 | uint16(lower)
+	addr += 1
+	result := GB.MMU.readByte(GB, addr)
+	updatedResult := result + 1
+	GB.MMU.writeByte(GB, addr, updatedResult)
+
+	//Set Flags
+	if updatedResult == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+
+	GB.CPU._r.F.N = 0
+
+	if (result & 0x0F) == 0x0F {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 3)
+
+	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': '-'}
+}
+
 //INC 16 bit register
 func INC_r16(GB *GAMEBOY, left uint16) uint16 {
 	GB.InfoLogger.Println("INC_r16")
@@ -81,7 +113,7 @@ func DEC_r8(GB *GAMEBOY, left uint8) uint8 {
 	result := left - 1
 
 	//Set Flags
-	if GB.CPU._r.B == 0 {
+	if result == 0 {
 		GB.CPU._r.F.Z = 1
 	} else {
 		GB.CPU._r.F.Z = 0
@@ -115,6 +147,38 @@ func DEC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return byte(combined >> 8), byte(combined & 0xFF)
+}
+
+//DEC 2x 8-bit register (as 16 bit)
+func DEC_addrr8r8(GB *GAMEBOY, upper uint8, lower uint8) {
+	GB.InfoLogger.Println("DEC_addrr8r8")
+
+	//Perform Operation
+	addr := uint16(upper)<<8 | uint16(lower)
+	addr += 1
+	result := GB.MMU.readByte(GB, addr)
+	updatedResult := result + 1
+	GB.MMU.writeByte(GB, addr, updatedResult)
+
+	//Set Flags
+	if updatedResult == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+
+	GB.CPU._r.F.N = 1
+
+	if ((result&0xF)-1)&0x10 == 0x10 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 3)
+
+	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': '-'}
 }
 
 //DEC 16 bit register
