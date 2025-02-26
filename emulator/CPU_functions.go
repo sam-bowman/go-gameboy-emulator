@@ -629,6 +629,42 @@ func LD_addrr8r8_r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8, right uint8) {
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 }
 
+//LOAD 8-bit register into the memory address of 2 8-bit registers (as 16-bit) and increment
+func LD_addrr8r8i_r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8, right uint8) (uint8, uint8) {
+	GB.InfoLogger.Println("LD_addrr8r8i_r8")
+
+	//Perform Operation
+	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	GB.MMU.writeByte(GB, addr, right)
+	addr += 1
+	newAddrLeft := uint8((addr & 0xFF00) >> 8)
+	newAddrRight := uint8(addr & 0x00FF)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	return newAddrLeft, newAddrRight
+}
+
+//LOAD 8-bit register into the memory address of 2 8-bit registers (as 16-bit) and decrement
+func LD_addrr8r8d_r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8, right uint8) (uint8, uint8) {
+	GB.InfoLogger.Println("LD_addrr8r8d_r8")
+
+	//Perform Operation
+	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	GB.MMU.writeByte(GB, addr, right)
+	addr -= 1
+	newAddrLeft := uint8((addr & 0xFF00) >> 8)
+	newAddrRight := uint8(addr & 0x00FF)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	return newAddrLeft, newAddrRight
+}
+
 //LOAD value at memory address of 2 8-bit registers (as 16-bit) into 8-bit register
 func LD_r8_addrr8r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8) uint8 {
 	GB.InfoLogger.Println("LD_r8_addrr8r8")
@@ -642,6 +678,42 @@ func LD_r8_addrr8r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8) uint8 {
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
 	return result
+}
+
+//LOAD value at memory address of 2 8-bit registers (as 16-bit) and increment, into 8-bit register
+func LD_r8_addrr8r8i(GB *GAMEBOY, addrLeft uint8, addrRight uint8) (uint8, uint8, uint8) {
+	GB.InfoLogger.Println("LD_r8_addrr8r8i")
+
+	//Perform Operation
+	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	result := GB.MMU.readByte(GB, addr)
+	addr += 1
+	newAddrLeft := uint8((addr & 0xFF00) >> 8)
+	newAddrRight := uint8(addr & 0x00FF)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	return result, newAddrLeft, newAddrRight
+}
+
+//LOAD value at memory address of 2 8-bit registers (as 16-bit)and decrement, into 8-bit register
+func LD_r8_addrr8r8d(GB *GAMEBOY, addrLeft uint8, addrRight uint8) (uint8, uint8, uint8) {
+	GB.InfoLogger.Println("LD_r8_addrr8r8d")
+
+	//Perform Operation
+	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	result := GB.MMU.readByte(GB, addr)
+	addr -= 1
+	newAddrLeft := uint8((addr & 0xFF00) >> 8)
+	newAddrRight := uint8(addr & 0x00FF)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	return result, newAddrLeft, newAddrRight
 }
 
 //LOAD 8-bit register into memory address of next 16-bits
