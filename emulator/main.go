@@ -15,6 +15,7 @@ var gbRenderScale = 4
 type GAMEBOY struct {
 	CPU *CPU
 	MMU *MMU
+	GPU *GPU
 }
 
 // newGameboy creates a new GAMEBOY and initializes the CPU and MMU.
@@ -22,6 +23,7 @@ func newGameboy() *GAMEBOY {
 	GAMEBOY := &GAMEBOY{}
 	GAMEBOY.CPU = newCPU()
 	GAMEBOY.MMU = newMMU()
+	GAMEBOY.GPU = newGPU()
 	return GAMEBOY
 }
 
@@ -70,8 +72,9 @@ func main() {
 	// Initialize Gameboy Components
 	game.GAMEBOY = *newGameboy()
 
-	// Load ROM
-	game.GAMEBOY.MMU._rom = RetrieveROM("../roms-for-testing/pokemon-fire-red.gb")
+	// Load GB Files
+	game.GAMEBOY.MMU._bios = ReadGBFile("../roms/bios.gb")
+	game.GAMEBOY.MMU._rom = ReadGBFile("../roms/pokemon-fire-red.gb")
 
 	// Start the game
 	if err := ebiten.RunGame(game); err != nil {
