@@ -71,11 +71,7 @@ func RLCA_0x07(GB *GAMEBOY) {
 // 0x08 LD addra16_SP
 func LD_0x08_addra16_SP(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x08 LD addra16_SP")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 3
-	GB.CPU._r.M = 5
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addra16_r16(GB, GB.CPU._r.SP)
 }
 
 // 0x09 ADD HL_BC
@@ -1691,11 +1687,7 @@ func JP_0xE9_HL(GB *GAMEBOY) {
 // 0xEA LD addra16_A
 func LD_0xEA_addra16_A(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xEA LD addra16_A")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 3
-	GB.CPU._r.M = 4
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addra16_r8(GB, GB.CPU._r.A)
 }
 
 // 0xEB ILLEGAL_EB
@@ -1843,11 +1835,7 @@ func LD_0xF9_SP_HL(GB *GAMEBOY) {
 // 0xFA LD A_addra16
 func LD_0xFA_A_addra16(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xFA LD A_addra16")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 3
-	GB.CPU._r.M = 4
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_addra16(GB)
 }
 
 // 0xFB EI

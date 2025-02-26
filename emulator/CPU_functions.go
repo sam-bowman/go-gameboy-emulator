@@ -331,6 +331,46 @@ func LD_r8_addrr8r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8) uint8 {
 	return result
 }
 
+func LD_addra16_r8(GB *GAMEBOY, val uint8) {
+	GB.InfoLogger.Println("LD_addra16_r8")
+
+	//Perform Operation
+	addr := uint16(GB.MMU.read2Bytes(GB, GB.CPU._r.PC+1))
+	GB.MMU.writeByte(GB, addr, val)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 3, 5)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+}
+
+func LD_addra16_r16(GB *GAMEBOY, val uint16) {
+	GB.InfoLogger.Println("LD_addra16_r16")
+
+	//Perform Operation
+	addr := uint16(GB.MMU.read2Bytes(GB, GB.CPU._r.PC+1))
+	GB.MMU.write2Bytes(GB, addr, val)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 3, 5)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+}
+
+func LD_r8_addra16(GB *GAMEBOY) uint8 {
+	GB.InfoLogger.Println("LD_r8_addra16")
+
+	//Perform Operation
+	addr := uint16(GB.MMU.read2Bytes(GB, GB.CPU._r.PC+1))
+	result := GB.MMU.readByte(GB, addr)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 3, 4)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	return result
+}
+
 //Additions Carry -----
 func ADC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	GB.InfoLogger.Println("ADC_r8_r8")
