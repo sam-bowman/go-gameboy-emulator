@@ -9,6 +9,17 @@ func REG_CLOCK_TIMINGS(GB *GAMEBOY, PC uint16, M uint8) {
 	GB.CPU._r.T = M * 4
 }
 
+func COMBINE_8BITS_TO_16BITS(upper uint8, lower uint8) uint16 {
+	combined := uint16(upper)<<8 | uint16(lower)
+	return combined
+}
+
+func SPLIT_16BITS_TO_8BITS(combined uint16) (uint8, uint8) {
+	splitUpper := uint8((combined & 0xFF00) >> 8)
+	splitLower := uint8(combined & 0x00FF)
+	return splitUpper, splitLower
+}
+
 //---------- Arithmetic ----------
 
 //----- Increments ------
@@ -47,14 +58,14 @@ func INC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 	GB.InfoLogger.Println("INC_r8r8")
 
 	//Perform Operation
-	combined := uint16(upper)<<8 | uint16(lower)
+	combined := COMBINE_8BITS_TO_16BITS(upper, lower)
 	combined += 1
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
-	return byte(combined >> 8), byte(combined & 0xFF)
+	return SPLIT_16BITS_TO_8BITS(combined)
 }
 
 //INC value ad address of 2x 8-bit register (as 16 bit)
@@ -62,7 +73,7 @@ func INC_addrr8r8(GB *GAMEBOY, upper uint8, lower uint8) {
 	GB.InfoLogger.Println("INC_addrr8r8")
 
 	//Perform Operation
-	addr := uint16(upper)<<8 | uint16(lower)
+	addr := COMBINE_8BITS_TO_16BITS(upper, lower)
 	addr += 1
 	result := GB.MMU.readByte(GB, addr)
 	updatedResult := result + 1
@@ -139,14 +150,14 @@ func DEC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 	GB.InfoLogger.Println("DEC_r8r8")
 
 	//Perform Operation
-	combined := uint16(upper)<<8 | uint16(lower)
+	combined := COMBINE_8BITS_TO_16BITS(upper, lower)
 	combined -= 1
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
-	return byte(combined >> 8), byte(combined & 0xFF)
+	return SPLIT_16BITS_TO_8BITS(combined)
 }
 
 //DEC 2x 8-bit register (as 16 bit)
@@ -154,7 +165,7 @@ func DEC_addrr8r8(GB *GAMEBOY, upper uint8, lower uint8) {
 	GB.InfoLogger.Println("DEC_addrr8r8")
 
 	//Perform Operation
-	addr := uint16(upper)<<8 | uint16(lower)
+	addr := COMBINE_8BITS_TO_16BITS(upper, lower)
 	addr += 1
 	result := GB.MMU.readByte(GB, addr)
 	updatedResult := result + 1
@@ -272,8 +283,8 @@ func ADD_r8r8_r8r8(GB *GAMEBOY, leftUpper uint8, leftLower uint8, rightUpper uin
 	GB.InfoLogger.Println("ADD_r8r8_r8r8")
 
 	//Perform Operation
-	left := uint16(leftUpper)<<8 | uint16(leftLower)
-	right := uint16(rightUpper)<<8 | uint16(rightLower)
+	left := COMBINE_8BITS_TO_16BITS(leftUpper, leftLower)
+	right := COMBINE_8BITS_TO_16BITS(rightUpper, rightLower)
 	result := left + right
 
 	//Set Flags
@@ -295,7 +306,7 @@ func ADD_r8r8_r8r8(GB *GAMEBOY, leftUpper uint8, leftLower uint8, rightUpper uin
 	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
-	return uint8(result >> 8), uint8(result & 0xFF)
+	return SPLIT_16BITS_TO_8BITS(result)
 }
 
 //ADD 16-bit register to 2 8-bit registers (as 16-bit)
@@ -303,7 +314,7 @@ func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (
 	GB.InfoLogger.Println("ADD_r8r8_r16")
 
 	//Perform Operation
-	left := uint16(leftUpper)<<8 | uint16(leftLower)
+	left := COMBINE_8BITS_TO_16BITS(leftUpper, leftLower)
 	result := left + right
 
 	//Set Flags
@@ -325,7 +336,7 @@ func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (
 	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': 'H', 'C': 'C'}
-	return uint8(result >> 8), uint8(result & 0xFF)
+	return SPLIT_16BITS_TO_8BITS(result)
 }
 
 //----- Additions Carry -----
@@ -336,7 +347,6 @@ func ADC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	//Perform Operation
 	result := left + (right + GB.CPU._r.F.C)
-	result16 := uint16(left) + (uint16(right) + uint16(GB.CPU._r.F.C))
 
 	//Set Flags
 	if result == 0 {
@@ -347,13 +357,13 @@ func ADC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	GB.CPU._r.F.N = 0
 
-	if (((left & 0xF) + (right & 0xF)) & 0x10) >= 0x10 {
+	if ((left & 0xF) + (right & 0xF)) >= 0x10 {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if result16 >= 0x100 {
+	if (((left&0xF0)>>4 + (right&0xF0)>>4) + GB.CPU._r.F.C) >= 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -372,7 +382,6 @@ func ADC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	//Perform Operation
 	result := left + (right + GB.CPU._r.F.C)
-	result16 := uint16(left) + (uint16(right) + uint16(GB.CPU._r.F.C))
 
 	//Set Flags
 	if result == 0 {
@@ -383,13 +392,13 @@ func ADC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	GB.CPU._r.F.N = 0
 
-	if (((left & 0xF) + (right & 0xF)) & 0x10) >= 0x10 {
+	if ((left & 0xF) + (right & 0xF)) >= 0x10 {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if result16 >= 0x100 {
+	if (((left&0xF0)>>4 + (right&0xF0)>>4) + GB.CPU._r.F.C) >= 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -642,7 +651,7 @@ func LD_r16_n16(GB *GAMEBOY) uint16 {
 	//Perform Operation
 	upper := GB.MMU.readByte(GB, GB.CPU._r.PC+2)
 	lower := GB.MMU.readByte(GB, GB.CPU._r.PC+1)
-	combined := uint16(upper)<<8 | uint16(lower)
+	combined := COMBINE_8BITS_TO_16BITS(upper, lower)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 3, 3)
@@ -684,7 +693,7 @@ func LD_addrr8r8_r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8, right uint8) {
 	GB.InfoLogger.Println("LD_addrr8r8_r8")
 
 	//Perform Operation
-	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	addr := COMBINE_8BITS_TO_16BITS(addrLeft, addrRight)
 	GB.MMU.writeByte(GB, addr, right)
 
 	//Set PC & Timings
@@ -698,7 +707,7 @@ func LD_addrr8r8i_r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8, right uint8) 
 	GB.InfoLogger.Println("LD_addrr8r8i_r8")
 
 	//Perform Operation
-	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	addr := COMBINE_8BITS_TO_16BITS(addrLeft, addrRight)
 	GB.MMU.writeByte(GB, addr, right)
 	addr += 1
 	newAddrLeft := uint8((addr & 0xFF00) >> 8)
@@ -716,7 +725,7 @@ func LD_addrr8r8d_r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8, right uint8) 
 	GB.InfoLogger.Println("LD_addrr8r8d_r8")
 
 	//Perform Operation
-	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	addr := COMBINE_8BITS_TO_16BITS(addrLeft, addrRight)
 	GB.MMU.writeByte(GB, addr, right)
 	addr -= 1
 	newAddrLeft := uint8((addr & 0xFF00) >> 8)
@@ -734,7 +743,7 @@ func LD_r8_addrr8r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8) uint8 {
 	GB.InfoLogger.Println("LD_r8_addrr8r8")
 
 	//Perform Operation
-	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	addr := COMBINE_8BITS_TO_16BITS(addrLeft, addrRight)
 	result := GB.MMU.readByte(GB, addr)
 
 	//Set PC & Timings
@@ -749,7 +758,7 @@ func LD_r8_addrr8r8i(GB *GAMEBOY, addrLeft uint8, addrRight uint8) (uint8, uint8
 	GB.InfoLogger.Println("LD_r8_addrr8r8i")
 
 	//Perform Operation
-	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	addr := COMBINE_8BITS_TO_16BITS(addrLeft, addrRight)
 	result := GB.MMU.readByte(GB, addr)
 	addr += 1
 	newAddrLeft := uint8((addr & 0xFF00) >> 8)
@@ -767,7 +776,7 @@ func LD_r8_addrr8r8d(GB *GAMEBOY, addrLeft uint8, addrRight uint8) (uint8, uint8
 	GB.InfoLogger.Println("LD_r8_addrr8r8d")
 
 	//Perform Operation
-	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	addr := COMBINE_8BITS_TO_16BITS(addrLeft, addrRight)
 	result := GB.MMU.readByte(GB, addr)
 	addr -= 1
 	newAddrLeft := uint8((addr & 0xFF00) >> 8)
