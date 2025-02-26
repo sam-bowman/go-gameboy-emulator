@@ -304,6 +304,33 @@ func LD_r8_r8(GB *GAMEBOY, right uint8) uint8 {
 	return result
 }
 
+func LD_addrr8r8_r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8, right uint8) {
+	GB.InfoLogger.Println("LD_addrr8r8_r8")
+
+	//Perform Operation
+	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	GB.MMU.writeByte(GB, addr, right)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+}
+
+func LD_r8_addrr8r8(GB *GAMEBOY, addrLeft uint8, addrRight uint8) uint8 {
+	GB.InfoLogger.Println("LD_r8_addrr8r8")
+
+	//Perform Operation
+	addr := uint16(addrLeft)<<8 | uint16(addrRight)
+	result := GB.MMU.readByte(GB, addr)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
+
+	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	return result
+}
+
 //Additions Carry -----
 func ADC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	GB.InfoLogger.Println("ADC_r8_r8")

@@ -8,6 +8,7 @@ package main
 
 //opcode source: https://gbdev.io/gb-opcodes/optables/
 //interactive reference table: https://meganesu.github.io/generate-gb-opcodes/
+//reference: https://rgbds.gbdev.io/docs/v0.6.1/gbz80.7
 
 //0b10000000 = Z : Zero
 //0b01000000 = N : Subtraction
@@ -30,11 +31,7 @@ func LD_0x01_BC_n16(GB *GAMEBOY) {
 // 0x02 LD addrBC_A
 func LD_0x02_addrBC_A(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x02 LD addrBC_A")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.B, GB.CPU._r.C, GB.CPU._r.A)
 }
 
 // 0x03 INC BC
@@ -90,11 +87,7 @@ func ADD_0x09_HL_BC(GB *GAMEBOY) {
 // 0x0A LD A_addrBC
 func LD_0x0A_A_addrBC(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x0A LD A_addrBC")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_addrr8r8(GB, GB.CPU._r.B, GB.CPU._r.C)
 }
 
 // 0x0B DEC BC
@@ -150,11 +143,7 @@ func LD_0x11_DE_n16(GB *GAMEBOY) {
 // 0x12 LD addrDE_A
 func LD_0x12_addrDE_A(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x12 LD addrDE_A")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.D, GB.CPU._r.E, GB.CPU._r.A)
 }
 
 // 0x13 INC DE
@@ -210,11 +199,7 @@ func ADD_0x19_HL_DE(GB *GAMEBOY) {
 // 0x1A LD A_addrDE
 func LD_0x1A_A_addrDE(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x1A LD A_addrDE")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_addrr8r8(GB, GB.CPU._r.D, GB.CPU._r.E)
 }
 
 // 0x1B DEC DE
@@ -426,11 +411,7 @@ func DEC_0x35_addrHL(GB *GAMEBOY) {
 // 0x36 LD addrHL_n8
 func LD_0x36_addrHL_n8(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x36 LD addrHL_n8")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 2
-	GB.CPU._r.M = 3
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.B, GB.CPU._r.C, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0x37 SCF
@@ -542,11 +523,7 @@ func LD_0x45_B_L(GB *GAMEBOY) {
 // 0x46 LD B_addrHL
 func LD_0x46_B_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x46 LD B_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.B = LD_r8_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x47 LD B_A
@@ -594,11 +571,7 @@ func LD_0x4D_C_L(GB *GAMEBOY) {
 // 0x4E LD C_addrHL
 func LD_0x4E_C_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x4E LD C_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.C = LD_r8_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x4F LD C_A
@@ -646,11 +619,7 @@ func LD_0x55_D_L(GB *GAMEBOY) {
 // 0x56 LD D_addrHL
 func LD_0x56_D_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x56 LD D_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.D = LD_r8_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x57 LD D_A
@@ -698,11 +667,7 @@ func LD_0x5D_E_L(GB *GAMEBOY) {
 // 0x5E LD E_addrHL
 func LD_0x5E_E_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x5E LD E_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.E = LD_r8_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x5F LD E_A
@@ -750,11 +715,7 @@ func LD_0x65_H_L(GB *GAMEBOY) {
 // 0x66 LD H_addrHL
 func LD_0x66_H_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x66 LD H_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.H = LD_r8_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x67 LD H_A
@@ -802,11 +763,7 @@ func LD_0x6D_L_L(GB *GAMEBOY) {
 // 0x6E LD L_addrHL
 func LD_0x6E_L_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x6E LD L_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.L = LD_r8_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x6F LD L_A
@@ -818,61 +775,37 @@ func LD_0x6F_L_A(GB *GAMEBOY) {
 // 0x70 LD addrHL_B
 func LD_0x70_addrHL_B(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x70 LD addrHL_B")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.B)
 }
 
 // 0x71 LD addrHL_C
 func LD_0x71_addrHL_C(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x71 LD addrHL_C")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.C)
 }
 
 // 0x72 LD addrHL_D
 func LD_0x72_addrHL_D(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x72 LD addrHL_D")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.D)
 }
 
 // 0x73 LD addrHL_E
 func LD_0x73_addrHL_E(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x73 LD addrHL_E")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.E)
 }
 
 // 0x74 LD addrHL_H
 func LD_0x74_addrHL_H(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x74 LD addrHL_H")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.H)
 }
 
 // 0x75 LD addrHL_L
 func LD_0x75_addrHL_L(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x75 LD addrHL_L")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.L)
 }
 
 // 0x76 HALT
@@ -888,11 +821,7 @@ func HALT_0x76(GB *GAMEBOY) {
 // 0x77 LD addrHL_A
 func LD_0x77_addrHL_A(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x77 LD addrHL_A")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	LD_addrr8r8_r8(GB, GB.CPU._r.H, GB.CPU._r.L, GB.CPU._r.A)
 }
 
 // 0x78 LD A_B
@@ -934,11 +863,7 @@ func LD_0x7D_A_L(GB *GAMEBOY) {
 // 0x7E LD A_addrHL
 func LD_0x7E_A_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x7E LD A_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.CPU._r.A = LD_r8_addrr8r8(GB, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x7F LD A_A
