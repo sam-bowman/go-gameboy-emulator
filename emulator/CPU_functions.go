@@ -20,6 +20,138 @@ func SPLIT_16BITS_TO_8BITS(combined uint16) (uint8, uint8) {
 	return splitUpper, splitLower
 }
 
+func SET_Z_FLAG(GB *GAMEBOY, on bool) {
+	if on {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+}
+func GET_Z_FLAG(GB *GAMEBOY) uint8 {
+	return GB.CPU._r.F.Z
+}
+
+func SET_N_FLAG(GB *GAMEBOY, on bool) {
+	if on {
+		GB.CPU._r.F.N = 1
+	} else {
+		GB.CPU._r.F.N = 0
+	}
+}
+func GET_N_FLAG(GB *GAMEBOY) uint8 {
+	return GB.CPU._r.F.N
+}
+
+func SET_H_FLAG(GB *GAMEBOY, on bool) {
+	if on {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+}
+func GET_H_FLAG(GB *GAMEBOY) uint8 {
+	return GB.CPU._r.F.H
+}
+
+func SET_C_FLAG(GB *GAMEBOY, on bool) {
+	if on {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
+}
+func GET_C_FLAG(GB *GAMEBOY) uint8 {
+	return GB.CPU._r.F.C
+}
+
+func SET_Z_FLAG_result8(GB *GAMEBOY, result uint8) {
+	if result == 0 {
+		SET_Z_FLAG(GB, true)
+	} else {
+		SET_Z_FLAG(GB, false)
+	}
+}
+
+func SET_Z_FLAG_result16(GB *GAMEBOY, result uint16) {
+	if result == 0 {
+		SET_Z_FLAG(GB, true)
+	} else {
+		SET_Z_FLAG(GB, false)
+	}
+}
+
+func SET_H_FLAG_8(GB *GAMEBOY, left uint8, right uint8, positive bool) {
+	leftLower := left & 0x0F
+	rightLower := right & 0x0F
+	if positive {
+		if leftLower+rightLower >= 0x0F {
+			SET_H_FLAG(GB, true)
+		} else {
+			SET_H_FLAG(GB, false)
+		}
+	} else {
+		if rightLower > leftLower {
+			SET_H_FLAG(GB, true)
+		} else {
+			SET_H_FLAG(GB, false)
+		}
+	}
+}
+
+func SET_H_FLAG_16(GB *GAMEBOY, left uint16, right uint16, positive bool) {
+	leftLower := left & 0x0FFF
+	rightLower := right & 0x0FFF
+	if positive {
+		if leftLower+rightLower >= 0x0FFF {
+			SET_H_FLAG(GB, true)
+		} else {
+			SET_H_FLAG(GB, false)
+		}
+	} else {
+		if rightLower > leftLower {
+			SET_H_FLAG(GB, true)
+		} else {
+			SET_H_FLAG(GB, false)
+		}
+	}
+}
+
+func SET_C_FLAG_8(GB *GAMEBOY, left uint8, right uint8, positive bool) {
+	leftUpper := (left & 0xF0) >> 4
+	rightUpper := (right & 0xF0) >> 4
+	if positive {
+		if leftUpper+rightUpper >= 0x0F {
+			SET_C_FLAG(GB, true)
+		} else {
+			SET_C_FLAG(GB, false)
+		}
+	} else {
+		if right > left {
+			SET_C_FLAG(GB, true)
+		} else {
+			SET_C_FLAG(GB, false)
+		}
+	}
+}
+
+func SET_C_FLAG_16(GB *GAMEBOY, left uint16, right uint16, positive bool) {
+	leftUpper := (left & 0xF000) >> 12
+	rightUpper := (right & 0xF000) >> 12
+	if positive {
+		if leftUpper+rightUpper >= 0x0F {
+			SET_C_FLAG(GB, true)
+		} else {
+			SET_C_FLAG(GB, false)
+		}
+	} else {
+		if right > left {
+			SET_C_FLAG(GB, true)
+		} else {
+			SET_C_FLAG(GB, false)
+		}
+	}
+}
+
 //---------- Arithmetic ----------
 
 //----- Increments ------
@@ -32,19 +164,11 @@ func INC_r8(GB *GAMEBOY, left uint8) uint8 {
 	result := left + 1
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if (left & 0xF) == 0xF {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, 1, true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -80,19 +204,11 @@ func INC_addrr8r8(GB *GAMEBOY, upper uint8, lower uint8) {
 	GB.MMU.writeByte(GB, addr, updatedResult)
 
 	//Set Flags
-	if updatedResult == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, updatedResult)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if (result & 0x0F) == 0x0F {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, updatedResult, 1, true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 3)
@@ -124,19 +240,11 @@ func DEC_r8(GB *GAMEBOY, left uint8) uint8 {
 	result := left - 1
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if ((left&0xF)-1)&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_H_FLAG_8(GB, left, 1, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -172,19 +280,11 @@ func DEC_addrr8r8(GB *GAMEBOY, upper uint8, lower uint8) {
 	GB.MMU.writeByte(GB, addr, updatedResult)
 
 	//Set Flags
-	if updatedResult == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, updatedResult)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if ((result&0xF)-1)&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_H_FLAG_8(GB, result, 1, true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 3)
@@ -216,25 +316,13 @@ func ADD_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left + right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if ((left & 0xF) + (right & 0xF)) >= 0x10 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right, true)
 
-	if ((left&0xF0)>>4 + (right&0xF0)>>4) >= 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right, true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -251,25 +339,13 @@ func ADD_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left + right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if ((left & 0xF) + (right & 0xF)) >= 0x10 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right, true)
 
-	if ((left&0xF0)>>4 + (right&0xF0)>>4) >= 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right, true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -288,19 +364,11 @@ func ADD_r8r8_r8r8(GB *GAMEBOY, leftUpper uint8, leftLower uint8, rightUpper uin
 	result := left + right
 
 	//Set Flags
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if ((left & 0xFFF) + (right & 0xFFF)) >= 0x1000 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_16(GB, left, right, true)
 
-	if ((left&0xF000)>>12 + (right&0xF000)>>12) >= 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_16(GB, left, right, true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 2)
@@ -318,19 +386,11 @@ func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (
 	result := left + right
 
 	//Set Flags
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if ((left & 0xFFF) + (right & 0xFFF)) >= 0x1000 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_16(GB, left, right, true)
 
-	if ((left&0xF000)>>12 + (right&0xF000)>>12) >= 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_16(GB, left, right, true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 2)
@@ -346,28 +406,16 @@ func ADC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	GB.InfoLogger.Println("ADC_r8_r8")
 
 	//Perform Operation
-	result := left + (right + GB.CPU._r.F.C)
+	result := left + (right + GET_C_FLAG(GB))
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if ((left & 0xF) + (right & 0xF)) >= 0x10 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right+GET_C_FLAG(GB), true)
 
-	if (((left&0xF0)>>4 + (right&0xF0)>>4) + GB.CPU._r.F.C) >= 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right+GET_C_FLAG(GB), true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -381,28 +429,16 @@ func ADC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	GB.InfoLogger.Println("ADC_r8_n8")
 
 	//Perform Operation
-	result := left + (right + GB.CPU._r.F.C)
+	result := left + (right + GET_C_FLAG(GB))
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	if ((left & 0xF) + (right & 0xF)) >= 0x10 {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right+GET_C_FLAG(GB), true)
 
-	if (((left&0xF0)>>4 + (right&0xF0)>>4) + GB.CPU._r.F.C) >= 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right+GET_C_FLAG(GB), true)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -421,25 +457,13 @@ func SUB_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left - right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if (right & 0xF) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right, false)
 
-	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -456,25 +480,13 @@ func SUB_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left - right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if (right & 0xF) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right, false)
 
-	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -487,31 +499,19 @@ func SUB_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 //
 func SBC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	GB.InfoLogger.Println("SUB_r8_r8")
+	GB.InfoLogger.Println("SBC_r8_r8")
 
 	//Perform Operation
-	result := left - right - GB.CPU._r.F.C
+	result := left - right - GET_C_FLAG(GB)
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if ((right & 0xF) + GB.CPU._r.F.C) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right+GET_C_FLAG(GB), false)
 
-	if ((left&0xF)-(right&0xF)-GB.CPU._r.F.C)&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right+GET_C_FLAG(GB), false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -525,28 +525,16 @@ func SBC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	GB.InfoLogger.Println("SUB_r8_n8")
 
 	//Perform Operation
-	result := left - right - GB.CPU._r.F.C
+	result := left - right - GET_C_FLAG(GB)
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if ((right & 0xF) + GB.CPU._r.F.C) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right+GET_C_FLAG(GB), false)
 
-	if ((left&0xF)-(right&0xF)-GB.CPU._r.F.C)&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right+GET_C_FLAG(GB), false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -565,25 +553,13 @@ func CP_r8_r8(GB *GAMEBOY, left uint8, right uint8) {
 	result := left - right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if (right & 0xF) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right, false)
 
-	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -599,25 +575,13 @@ func CP_r8_n8(GB *GAMEBOY, left uint8, right uint8) {
 	result := left - right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 1
+	SET_N_FLAG(GB, true)
 
-	if (right & 0xF) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
+	SET_H_FLAG_8(GB, left, right, false)
 
-	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
+	SET_C_FLAG_8(GB, left, right, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -846,17 +810,13 @@ func AND_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left & right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	GB.CPU._r.F.H = 1
+	SET_H_FLAG(GB, true)
 
-	GB.CPU._r.F.C = 0
+	SET_C_FLAG(GB, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -873,17 +833,13 @@ func AND_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left & right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	GB.CPU._r.F.H = 1
+	SET_H_FLAG(GB, true)
 
-	GB.CPU._r.F.C = 0
+	SET_C_FLAG(GB, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -902,17 +858,13 @@ func XOR_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left ^ right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	GB.CPU._r.F.H = 0
+	SET_H_FLAG(GB, false)
 
-	GB.CPU._r.F.C = 0
+	SET_C_FLAG(GB, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -929,17 +881,13 @@ func XOR_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left ^ right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	GB.CPU._r.F.H = 0
+	SET_H_FLAG(GB, false)
 
-	GB.CPU._r.F.C = 0
+	SET_C_FLAG(GB, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -958,17 +906,13 @@ func OR_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left | right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	GB.CPU._r.F.H = 0
+	SET_H_FLAG(GB, false)
 
-	GB.CPU._r.F.C = 0
+	SET_C_FLAG(GB, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 1, 1)
@@ -985,17 +929,13 @@ func OR_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	result := left | right
 
 	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
+	SET_Z_FLAG_result8(GB, result)
 
-	GB.CPU._r.F.N = 0
+	SET_N_FLAG(GB, false)
 
-	GB.CPU._r.F.H = 0
+	SET_H_FLAG(GB, false)
 
-	GB.CPU._r.F.C = 0
+	SET_C_FLAG(GB, false)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
