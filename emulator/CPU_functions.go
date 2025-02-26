@@ -26,7 +26,7 @@ func INC_r8(GB *GAMEBOY, left uint8) uint8 {
 
 	GB.CPU._r.F.N = 0
 
-	if ((left & 0xF) == 0xF) {
+	if (left & 0xF) == 0xF {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
@@ -82,7 +82,7 @@ func DEC_r8(GB *GAMEBOY, left uint8) uint8 {
 
 	GB.CPU._r.F.N = 1
 
-	if ((left & 0xF) - 1) & 0x10 == 0x10 {
+	if ((left&0xF)-1)&0x10 == 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -144,7 +144,7 @@ func ADD_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF0)>>4 + (right & 0xF0)>>4) >= 0x10 {
+	if ((left&0xF0)>>4 + (right&0xF0)>>4) >= 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -178,7 +178,7 @@ func ADD_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF0)>>4 + (right & 0xF0)>>4) >= 0x10 {
+	if ((left&0xF0)>>4 + (right&0xF0)>>4) >= 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -208,7 +208,7 @@ func ADD_r8r8_r8r8(GB *GAMEBOY, leftUpper uint8, leftLower uint8, rightUpper uin
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF000)>>12 + (right & 0xF000)>>12) >= 0x10 {
+	if ((left&0xF000)>>12 + (right&0xF000)>>12) >= 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -237,7 +237,7 @@ func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF000)>>12 + (right & 0xF000)>>12) >= 0x10 {
+	if ((left&0xF000)>>12 + (right&0xF000)>>12) >= 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -255,8 +255,8 @@ func LD_r8r8_n16(GB *GAMEBOY) (uint8, uint8) {
 	log.Println("LD_r8r8_n16")
 
 	//Perform Operation
-	upper := GB.MMU._rom[GB.CPU._r.PC+2]
-	lower := GB.MMU._rom[GB.CPU._r.PC+1]
+	upper := GB.MMU.readByte(GB, GB.CPU._r.PC+2)
+	lower := GB.MMU.readByte(GB, GB.CPU._r.PC+1)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 3, 3)
@@ -269,8 +269,8 @@ func LD_r16_n16(GB *GAMEBOY) uint16 {
 	log.Println("LD_r8r8_n16")
 
 	//Perform Operation
-	upper := GB.MMU._rom[GB.CPU._r.PC+2]
-	lower := GB.MMU._rom[GB.CPU._r.PC+1]
+	upper := GB.MMU.readByte(GB, GB.CPU._r.PC+2)
+	lower := GB.MMU.readByte(GB, GB.CPU._r.PC+1)
 	combined := uint16(upper)<<8 | uint16(lower)
 
 	//Set PC & Timings
@@ -284,7 +284,7 @@ func LD_r8_n8(GB *GAMEBOY) uint8 {
 	log.Println("LD_r8_n8")
 
 	//Perform Operation
-	result := GB.MMU._rom[GB.CPU._r.PC+1]
+	result := GB.MMU.readByte(GB, GB.CPU._r.PC+1)
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
@@ -393,13 +393,13 @@ func SUB_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	GB.CPU._r.F.N = 1
 
-	if ((right & 0xF) > (left & 0xF)) {
+	if (right & 0xF) > (left & 0xF) {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF) - (right & 0xF)) & 0x10 == 0x10 {
+	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -427,13 +427,13 @@ func SUB_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	GB.CPU._r.F.N = 1
 
-	if ((right & 0xF) > (left & 0xF)) {
+	if (right & 0xF) > (left & 0xF) {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF) - (right & 0xF)) & 0x10 == 0x10 {
+	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -462,13 +462,13 @@ func SBC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	GB.CPU._r.F.N = 1
 
-	if (((right & 0xF) + GB.CPU._r.F.C) > (left & 0xF)) {
+	if ((right & 0xF) + GB.CPU._r.F.C) > (left & 0xF) {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF) - (right & 0xF) - GB.CPU._r.F.C) & 0x10 == 0x10 {
+	if ((left&0xF)-(right&0xF)-GB.CPU._r.F.C)&0x10 == 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -496,13 +496,13 @@ func SBC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	GB.CPU._r.F.N = 1
 
-	if (((right & 0xF) + GB.CPU._r.F.C) > (left & 0xF)) {
+	if ((right & 0xF) + GB.CPU._r.F.C) > (left & 0xF) {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF) - (right & 0xF) - GB.CPU._r.F.C) & 0x10 == 0x10 {
+	if ((left&0xF)-(right&0xF)-GB.CPU._r.F.C)&0x10 == 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -690,13 +690,13 @@ func CP_r8_r8(GB *GAMEBOY, left uint8, right uint8) {
 
 	GB.CPU._r.F.N = 1
 
-	if ((right & 0xF) > (left & 0xF)) {
+	if (right & 0xF) > (left & 0xF) {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF) - (right & 0xF)) & 0x10 == 0x10 {
+	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0
@@ -723,13 +723,13 @@ func CP_r8_n8(GB *GAMEBOY, left uint8, right uint8) {
 
 	GB.CPU._r.F.N = 1
 
-	if ((right & 0xF) > (left & 0xF)) {
+	if (right & 0xF) > (left & 0xF) {
 		GB.CPU._r.F.H = 1
 	} else {
 		GB.CPU._r.F.H = 0
 	}
 
-	if ((left & 0xF) - (right & 0xF)) & 0x10 == 0x10 {
+	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
 		GB.CPU._r.F.C = 1
 	} else {
 		GB.CPU._r.F.C = 0

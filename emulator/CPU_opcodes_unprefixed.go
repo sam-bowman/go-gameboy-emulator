@@ -1428,7 +1428,7 @@ func PUSH_0xC5_BC(GB *GAMEBOY) {
 // 0xC6 ADD A_n8
 func ADD_0xC6_A_n8(GB *GAMEBOY) {
 	log.Println("0xC6 ADD A_n8")
-	ADD_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC+1])
+	ADD_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xC7 RST $00
@@ -1504,7 +1504,7 @@ func CALL_0xCD_a16(GB *GAMEBOY) {
 // 0xCE ADC A_n8
 func ADC_0xCE_A_n8(GB *GAMEBOY) {
 	log.Println("0xCE ADC A_n8")
-	GB.CPU._r.A = ADC_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC + 1])
+	GB.CPU._r.A = ADC_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xCF RST $08
@@ -1580,7 +1580,7 @@ func PUSH_0xD5_DE(GB *GAMEBOY) {
 // 0xD6 SUB A_n8
 func SUB_0xD6_A_n8(GB *GAMEBOY) {
 	log.Println("0xD6 SUB A_n8")
-	GB.CPU._r.A = SUB_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC + 1])
+	GB.CPU._r.A = SUB_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xD7 RST $10
@@ -1656,7 +1656,7 @@ func ILLEGAL_DD_0xDD(GB *GAMEBOY) {
 // 0xDE SBC A_n8
 func SBC_0xDE_A_n8(GB *GAMEBOY) {
 	log.Println("0xDE SBC A_n8")
-	GB.CPU._r.A = SBC_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC + 1])
+	GB.CPU._r.A = SBC_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xDF RST $18
@@ -1732,7 +1732,7 @@ func PUSH_0xE5_HL(GB *GAMEBOY) {
 // 0xE6 AND A_n8
 func AND_0xE6_A_n8(GB *GAMEBOY) {
 	log.Println("0xE6 AND A_n8")
-	GB.CPU._r.A = AND_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC + 1])
+	GB.CPU._r.A = AND_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xE7 RST $20
@@ -1808,7 +1808,7 @@ func ILLEGAL_ED_0xED(GB *GAMEBOY) {
 // 0xEE XOR A_n8
 func XOR_0xEE_A_n8(GB *GAMEBOY) {
 	log.Println("0xEE XOR A_n8")
-	GB.CPU._r.A = XOR_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC + 1])
+	GB.CPU._r.A = XOR_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xEF RST $28
@@ -1884,7 +1884,7 @@ func PUSH_0xF5_AF(GB *GAMEBOY) {
 // 0xF6 OR A_n8
 func OR_0xF6_A_n8(GB *GAMEBOY) {
 	log.Println("0xF6 OR A_n8")
-	GB.CPU._r.A = OR_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC + 1])
+	GB.CPU._r.A = OR_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xF7 RST $30
@@ -1960,7 +1960,7 @@ func ILLEGAL_FD_0xFD(GB *GAMEBOY) {
 // 0xFE CP A_n8
 func CP_0xFE_A_n8(GB *GAMEBOY) {
 	log.Println("0xFE CP A_n8")
-	CP_r8_n8(GB, GB.CPU._r.A, GB.MMU._rom[GB.CPU._r.PC + 1])
+	CP_r8_n8(GB, GB.CPU._r.A, GB.MMU.readByte(GB, GB.CPU._r.PC+1))
 }
 
 // 0xFF RST $38
