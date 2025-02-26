@@ -90,10 +90,6 @@ func main() {
 	// Initialize Gameboy Components
 	game.GAMEBOY = *newGameboy()
 
-	// Load GB Files
-	game.GAMEBOY.MMU._bios = ReadGBFile("../roms/bios.gb")
-	game.GAMEBOY.MMU._rom = ReadGBFile("../roms/pokemon-fire-red.gb")
-
 	// Start the game
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)

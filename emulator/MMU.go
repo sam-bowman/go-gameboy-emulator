@@ -69,15 +69,10 @@ func read2Bytes(GB *GAMEBOY, addr uint16) uint16 {
 func writeByte(GB *GAMEBOY, addr uint16, val uint8) {
 	switch addr & 0xF000 {
 
-	case 0x0000: //BIOS & ROM0
-		if GB.MMU._inbios {
-			GB.MMU._bios[addr] = val
-		} else {
+	case 0x0000, 0x1000, 0x2000, 0x3000: //ROM0
+		if GB.MMU._inbios == false {
 			GB.MMU._rom[addr] = val
 		}
-
-	case 0x1000, 0x2000, 0x3000: //ROM0
-		GB.MMU._rom[addr] = val
 
 	case 0x4000, 0x5000, 0x6000, 0x7000: //ROM1
 		GB.MMU._rom[addr] = val
@@ -147,6 +142,12 @@ func newMMU() *MMU {
 	mmu.write2Bytes = write2Bytes
 
 	mmu._inbios = true
+
+	mmu._bios = ReadGBFile("../roms/bios.gb")
+	mmu._rom = ReadGBFile("../roms/pokemon-fire-red.gb")
+	mmu._wram = make([]byte, 0xFFFF)
+	mmu._eram = make([]byte, 0xFFFF)
+	mmu._zram = make([]byte, 0xFFFF)
 
 	return mmu
 }
