@@ -1,7 +1,5 @@
 package main
 
-import "log"
-
 //Common ------
 func REG_CLOCK_TIMINGS(GB *GAMEBOY, PC uint16, M uint8) {
 	//Set PC & Timings
@@ -12,7 +10,7 @@ func REG_CLOCK_TIMINGS(GB *GAMEBOY, PC uint16, M uint8) {
 
 //Increments ------
 func INC_r8(GB *GAMEBOY, left uint8) uint8 {
-	log.Println("INC_r8")
+	GB.InfoLogger.Println("INC_r8")
 
 	//Perform Operation
 	result := left + 1
@@ -40,7 +38,7 @@ func INC_r8(GB *GAMEBOY, left uint8) uint8 {
 }
 
 func INC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
-	log.Println("INC_r8r8")
+	GB.InfoLogger.Println("INC_r8r8")
 
 	//Perform Operation
 	combined := uint16(upper)<<8 | uint16(lower)
@@ -54,7 +52,7 @@ func INC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 }
 
 func INC_r16(GB *GAMEBOY, left uint16) uint16 {
-	log.Println("INC_r16")
+	GB.InfoLogger.Println("INC_r16")
 
 	//Perform Operation
 	result := left + 1
@@ -68,7 +66,7 @@ func INC_r16(GB *GAMEBOY, left uint16) uint16 {
 
 //Decrements ------
 func DEC_r8(GB *GAMEBOY, left uint8) uint8 {
-	log.Println("DEC_r8")
+	GB.InfoLogger.Println("DEC_r8")
 
 	//Perform Operation
 	result := left - 1
@@ -96,7 +94,7 @@ func DEC_r8(GB *GAMEBOY, left uint8) uint8 {
 }
 
 func DEC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
-	log.Println("DEC_r8r8")
+	GB.InfoLogger.Println("DEC_r8r8")
 
 	//Perform Operation
 	combined := uint16(upper)<<8 | uint16(lower)
@@ -110,7 +108,7 @@ func DEC_r8r8(GB *GAMEBOY, upper uint8, lower uint8) (uint8, uint8) {
 }
 
 func DEC_r16(GB *GAMEBOY, left uint16) uint16 {
-	log.Println("DEC_r16")
+	GB.InfoLogger.Println("DEC_r16")
 
 	//Perform Operation
 	result := left - 1
@@ -124,7 +122,7 @@ func DEC_r16(GB *GAMEBOY, left uint16) uint16 {
 
 //Additions ------
 func ADD_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("ADD_r8_r8")
+	GB.InfoLogger.Println("ADD_r8_r8")
 
 	//Perform Operation
 	result := left + right
@@ -158,7 +156,7 @@ func ADD_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func ADD_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("ADD_r8_n8")
+	GB.InfoLogger.Println("ADD_r8_n8")
 
 	//Perform Operation
 	result := left + right
@@ -192,7 +190,7 @@ func ADD_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func ADD_r8r8_r8r8(GB *GAMEBOY, leftUpper uint8, leftLower uint8, rightUpper uint8, rightLower uint8) (uint8, uint8) {
-	log.Println("ADD_r8r8_r8r8")
+	GB.InfoLogger.Println("ADD_r8r8_r8r8")
 
 	//Perform Operation
 	left := uint16(leftUpper)<<8 | uint16(leftLower)
@@ -222,7 +220,7 @@ func ADD_r8r8_r8r8(GB *GAMEBOY, leftUpper uint8, leftLower uint8, rightUpper uin
 }
 
 func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (uint8, uint8) {
-	log.Println("ADD_r8r8_r16")
+	GB.InfoLogger.Println("ADD_r8r8_r16")
 
 	//Perform Operation
 	left := uint16(leftUpper)<<8 | uint16(leftLower)
@@ -252,7 +250,7 @@ func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (
 
 //Loads ------
 func LD_r8r8_n16(GB *GAMEBOY) (uint8, uint8) {
-	log.Println("LD_r8r8_n16")
+	GB.InfoLogger.Println("LD_r8r8_n16")
 
 	//Perform Operation
 	upper := GB.MMU.readByte(GB, GB.CPU._r.PC+2)
@@ -266,7 +264,7 @@ func LD_r8r8_n16(GB *GAMEBOY) (uint8, uint8) {
 }
 
 func LD_r16_n16(GB *GAMEBOY) uint16 {
-	log.Println("LD_r8r8_n16")
+	GB.InfoLogger.Println("LD_r8r8_n16")
 
 	//Perform Operation
 	upper := GB.MMU.readByte(GB, GB.CPU._r.PC+2)
@@ -281,7 +279,7 @@ func LD_r16_n16(GB *GAMEBOY) uint16 {
 }
 
 func LD_r8_n8(GB *GAMEBOY) uint8 {
-	log.Println("LD_r8_n8")
+	GB.InfoLogger.Println("LD_r8_n8")
 
 	//Perform Operation
 	result := GB.MMU.readByte(GB, GB.CPU._r.PC+1)
@@ -294,7 +292,7 @@ func LD_r8_n8(GB *GAMEBOY) uint8 {
 }
 
 func LD_r8_r8(GB *GAMEBOY, right uint8) uint8 {
-	log.Println("LD_r8_r8")
+	GB.InfoLogger.Println("LD_r8_r8")
 
 	//Perform Operation
 	result := right
@@ -308,7 +306,7 @@ func LD_r8_r8(GB *GAMEBOY, right uint8) uint8 {
 
 //Additions Carry -----
 func ADC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("ADC_r8_r8")
+	GB.InfoLogger.Println("ADC_r8_r8")
 
 	//Perform Operation
 	result := left + (right + GB.CPU._r.F.C)
@@ -343,7 +341,7 @@ func ADC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func ADC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("ADC_r8_n8")
+	GB.InfoLogger.Println("ADC_r8_n8")
 
 	//Perform Operation
 	result := left + (right + GB.CPU._r.F.C)
@@ -379,7 +377,7 @@ func ADC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 //Subtractions ------
 func SUB_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("SUB_r8_r8")
+	GB.InfoLogger.Println("SUB_r8_r8")
 
 	//Perform Operation
 	result := left - right
@@ -413,7 +411,7 @@ func SUB_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func SUB_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("SUB_r8_n8")
+	GB.InfoLogger.Println("SUB_r8_n8")
 
 	//Perform Operation
 	result := left - right
@@ -448,7 +446,7 @@ func SUB_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 //Subtractions Carry -----
 func SBC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("SUB_r8_r8")
+	GB.InfoLogger.Println("SUB_r8_r8")
 
 	//Perform Operation
 	result := left - right - GB.CPU._r.F.C
@@ -482,7 +480,7 @@ func SBC_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func SBC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("SUB_r8_n8")
+	GB.InfoLogger.Println("SUB_r8_n8")
 
 	//Perform Operation
 	result := left - right - GB.CPU._r.F.C
@@ -517,7 +515,7 @@ func SBC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 //AND -----
 func AND_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("AND_r8_r8")
+	GB.InfoLogger.Println("AND_r8_r8")
 
 	//Perform Operation
 	result := left & right
@@ -543,7 +541,7 @@ func AND_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func AND_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("AND_r8_n8")
+	GB.InfoLogger.Println("AND_r8_n8")
 
 	//Perform Operation
 	result := left & right
@@ -570,7 +568,7 @@ func AND_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 //XOR -----
 func XOR_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("XOR_r8_r8")
+	GB.InfoLogger.Println("XOR_r8_r8")
 
 	//Perform Operation
 	result := left ^ right
@@ -596,7 +594,7 @@ func XOR_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func XOR_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("XOR_r8_n8")
+	GB.InfoLogger.Println("XOR_r8_n8")
 
 	//Perform Operation
 	result := left ^ right
@@ -623,7 +621,7 @@ func XOR_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 //OR -----
 func OR_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("OR_r8_r8")
+	GB.InfoLogger.Println("OR_r8_r8")
 
 	//Perform Operation
 	result := left | right
@@ -649,7 +647,7 @@ func OR_r8_r8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 }
 
 func OR_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
-	log.Println("OR_r8_n8")
+	GB.InfoLogger.Println("OR_r8_n8")
 
 	//Perform Operation
 	result := left | right
@@ -676,7 +674,7 @@ func OR_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 //Compare ------
 func CP_r8_r8(GB *GAMEBOY, left uint8, right uint8) {
-	log.Println("CP_r8_r8")
+	GB.InfoLogger.Println("CP_r8_r8")
 
 	//Perform Operation
 	result := left - right
@@ -709,7 +707,7 @@ func CP_r8_r8(GB *GAMEBOY, left uint8, right uint8) {
 }
 
 func CP_r8_n8(GB *GAMEBOY, left uint8, right uint8) {
-	log.Println("CP_r8_n8")
+	GB.InfoLogger.Println("CP_r8_n8")
 
 	//Perform Operation
 	result := left - right

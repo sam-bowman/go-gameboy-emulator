@@ -1,13 +1,14 @@
 package main
 
 func readByte(GB *GAMEBOY, addr uint16) uint8 {
-	switch addr {
+	switch addr & 0xF000 {
 
 	case 0x0000: //BIOS & ROM0
 		if GB.MMU._inbios {
 			if addr < 0x0100 {
 				return GB.MMU._bios[addr]
 			} else if GB.CPU._r.PC == 0x0100 {
+				GB.InfoLogger.Println("NOT IN BIOS")
 				GB.MMU._inbios = false
 			}
 			return GB.MMU._rom[addr]

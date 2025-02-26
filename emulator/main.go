@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -16,14 +18,29 @@ type GAMEBOY struct {
 	CPU *CPU
 	MMU *MMU
 	GPU *GPU
+
+	InfoLogger    *log.Logger
+	WarningLogger *log.Logger
+	ErrorLogger   *log.Logger
 }
 
 // newGameboy creates a new GAMEBOY and initializes the CPU and MMU.
 func newGameboy() *GAMEBOY {
 	GAMEBOY := &GAMEBOY{}
+
 	GAMEBOY.CPU = newCPU()
 	GAMEBOY.MMU = newMMU()
 	GAMEBOY.GPU = newGPU()
+
+	// Log configuration
+	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	GAMEBOY.InfoLogger = log.New(file, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+	GAMEBOY.WarningLogger = log.New(file, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
+	GAMEBOY.ErrorLogger = log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+
 	return GAMEBOY
 }
 
@@ -54,7 +71,7 @@ func (g *Game) Update() error {
 
 // Draw function, called every frame.
 func (g *Game) Draw(screen *ebiten.Image) {
-	ebitenutil.DebugPrint(screen, "Hello World")
+	ebitenutil.DebugPrint(screen, "In BIOS: "+strconv.FormatBool(g.GAMEBOY.MMU._inbios))
 }
 
 // Layout function, called when the window is resized.
@@ -64,6 +81,7 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 // Main function, called when the program starts.
 func main() {
+
 	// Initialize Ebiten
 	ebiten.SetWindowSize(gbResWidth*gbRenderScale, gbResHeight*gbRenderScale)
 	ebiten.SetWindowTitle("Hello, World!")

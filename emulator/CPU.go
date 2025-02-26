@@ -557,7 +557,7 @@ type CPU struct {
 
 func exec(GB *GAMEBOY) {
 	// Fetch the next opcode
-	opcode := GB.MMU._rom[GB.CPU._r.PC]
+	opcode := GB.MMU.readByte(GB, GB.CPU._r.PC)
 
 	// Execute the opcode
 	GB.CPU._map[opcode](GB)
