@@ -483,6 +483,76 @@ func SBC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 	return result
 }
 
+//----- Compare ------
+
+//
+func CP_r8_r8(GB *GAMEBOY, left uint8, right uint8) {
+	GB.InfoLogger.Println("CP_r8_r8")
+
+	//Perform Operation
+	result := left - right
+
+	//Set Flags
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+
+	GB.CPU._r.F.N = 1
+
+	if (right & 0xF) > (left & 0xF) {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+
+	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 1)
+
+	//FLAGS AFFECTED : {'Z': 'Z', 'N': '1', 'H': 'H', 'C': 'C'}
+}
+
+//
+func CP_r8_n8(GB *GAMEBOY, left uint8, right uint8) {
+	GB.InfoLogger.Println("CP_r8_n8")
+
+	//Perform Operation
+	result := left - right
+
+	//Set Flags
+	if result == 0 {
+		GB.CPU._r.F.Z = 1
+	} else {
+		GB.CPU._r.F.Z = 0
+	}
+
+	GB.CPU._r.F.N = 1
+
+	if (right & 0xF) > (left & 0xF) {
+		GB.CPU._r.F.H = 1
+	} else {
+		GB.CPU._r.F.H = 0
+	}
+
+	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
+		GB.CPU._r.F.C = 1
+	} else {
+		GB.CPU._r.F.C = 0
+	}
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 2, 2)
+
+	//FLAGS AFFECTED : {'Z': 'Z', 'N': '1', 'H': 'H', 'C': 'C'}
+}
+
 //---------- Memory ----------
 
 //----- Loads ------
@@ -788,74 +858,4 @@ func OR_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': '0', 'C': '0'}
 	return result
-}
-
-//----- Compare ------
-
-//
-func CP_r8_r8(GB *GAMEBOY, left uint8, right uint8) {
-	GB.InfoLogger.Println("CP_r8_r8")
-
-	//Perform Operation
-	result := left - right
-
-	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
-
-	GB.CPU._r.F.N = 1
-
-	if (right & 0xF) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
-
-	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
-
-	//Set PC & Timings
-	REG_CLOCK_TIMINGS(GB, 1, 1)
-
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '1', 'H': 'H', 'C': 'C'}
-}
-
-//
-func CP_r8_n8(GB *GAMEBOY, left uint8, right uint8) {
-	GB.InfoLogger.Println("CP_r8_n8")
-
-	//Perform Operation
-	result := left - right
-
-	//Set Flags
-	if result == 0 {
-		GB.CPU._r.F.Z = 1
-	} else {
-		GB.CPU._r.F.Z = 0
-	}
-
-	GB.CPU._r.F.N = 1
-
-	if (right & 0xF) > (left & 0xF) {
-		GB.CPU._r.F.H = 1
-	} else {
-		GB.CPU._r.F.H = 0
-	}
-
-	if ((left&0xF)-(right&0xF))&0x10 == 0x10 {
-		GB.CPU._r.F.C = 1
-	} else {
-		GB.CPU._r.F.C = 0
-	}
-
-	//Set PC & Timings
-	REG_CLOCK_TIMINGS(GB, 2, 2)
-
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '1', 'H': 'H', 'C': 'C'}
 }
