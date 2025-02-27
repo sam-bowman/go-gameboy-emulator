@@ -1,5 +1,7 @@
 package main
 
+import "math/bits"
+
 //n8  = immediate 8-bit data
 //n16 = immediate little-endian 16-bit data
 //a8  = 8-bit unsigned data, which is added to $FF00 in certain instructions to create a 16-bit address in HRAM (High RAM)
@@ -61,10 +63,16 @@ func LD_0x06_B_n8(GB *GAMEBOY) {
 // 0x07 RLCA
 func RLCA_0x07(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x07 RLCA")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	bits.RotateLeft8(GB.CPU._r.A, 1)
+	SET_Z_FLAG(GB, false)
+	SET_N_FLAG(GB, false)
+	SET_H_FLAG(GB, false)
+	if GB.CPU._r.A&0x01 == 0x01 {
+		SET_C_FLAG(GB, true)
+	} else {
+		SET_C_FLAG(GB, false)
+	}
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 	//FLAGS AFFECTED : {'Z': '0', 'N': '0', 'H': '0', 'C': 'C'}
 }
 
@@ -113,10 +121,16 @@ func LD_0x0E_C_n8(GB *GAMEBOY) {
 // 0x0F RRCA
 func RRCA_0x0F(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x0F RRCA")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	bits.RotateLeft8(GB.CPU._r.A, -1)
+	SET_Z_FLAG(GB, false)
+	SET_N_FLAG(GB, false)
+	SET_H_FLAG(GB, false)
+	if GB.CPU._r.A&0x80 == 0x80 {
+		SET_C_FLAG(GB, true)
+	} else {
+		SET_C_FLAG(GB, false)
+	}
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 	//FLAGS AFFECTED : {'Z': '0', 'N': '0', 'H': '0', 'C': 'C'}
 }
 
@@ -169,10 +183,18 @@ func LD_0x16_D_n8(GB *GAMEBOY) {
 // 0x17 RLA
 func RLA_0x17(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x17 RLA")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	bits.RotateLeft8(GB.CPU._r.A, 1)
+	SET_Z_FLAG(GB, false)
+	SET_N_FLAG(GB, false)
+	SET_H_FLAG(GB, false)
+	cFlag := GB.CPU._r.F.C
+	if GB.CPU._r.A&0x01 == 0x01 {
+		SET_C_FLAG(GB, true)
+	} else {
+		SET_C_FLAG(GB, false)
+	}
+	GB.CPU._r.A = (GB.CPU._r.A & 0xFE) | (cFlag & 0x01)
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 	//FLAGS AFFECTED : {'Z': '0', 'N': '0', 'H': '0', 'C': 'C'}
 }
 
@@ -225,10 +247,18 @@ func LD_0x1E_E_n8(GB *GAMEBOY) {
 // 0x1F RRA
 func RRA_0x1F(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x1F RRA ")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	bits.RotateLeft8(GB.CPU._r.A, -1)
+	SET_Z_FLAG(GB, false)
+	SET_N_FLAG(GB, false)
+	SET_H_FLAG(GB, false)
+	cFlag := GB.CPU._r.F.C
+	if GB.CPU._r.A&0x80 == 0x80 {
+		SET_C_FLAG(GB, true)
+	} else {
+		SET_C_FLAG(GB, false)
+	}
+	GB.CPU._r.A = (GB.CPU._r.A & 0x7F) | ((cFlag * 0x01) << 7)
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 	//FLAGS AFFECTED : {'Z': '0', 'N': '0', 'H': '0', 'C': 'C'}
 }
 
@@ -337,10 +367,10 @@ func LD_0x2E_L_n8(GB *GAMEBOY) {
 // 0x2F CPL
 func CPL_0x2F(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x2F CPL ")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	GB.CPU._r.A = ^GB.CPU._r.A
+	SET_N_FLAG(GB, true)
+	SET_H_FLAG(GB, true)
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 	//FLAGS AFFECTED : {'Z': '-', 'N': '1', 'H': '1', 'C': '-'}
 }
 
@@ -393,10 +423,10 @@ func LD_0x36_addrHL_n8(GB *GAMEBOY) {
 // 0x37 SCF
 func SCF_0x37(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x37 SCF ")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	SET_N_FLAG(GB, false)
+	SET_H_FLAG(GB, false)
+	SET_C_FLAG(GB, true)
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': '0', 'C': '1'}
 }
 
@@ -449,10 +479,10 @@ func LD_0x3E_A_n8(GB *GAMEBOY) {
 // 0x3F CCF
 func CCF_0x3F(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x3F CCF ")
-	//NEEDS CODE
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
+	SET_N_FLAG(GB, false)
+	SET_H_FLAG(GB, false)
+	GB.CPU._r.F.C = ^GB.CPU._r.F.C
+	REG_CLOCK_TIMINGS(GB, 1, 1)
 	//FLAGS AFFECTED : {'Z': '-', 'N': '0', 'H': '0', 'C': 'C'}
 }
 
@@ -883,11 +913,7 @@ func ADD_0x85_A_L(GB *GAMEBOY) {
 // 0x86 ADD A_addrHL
 func ADD_0x86_A_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x86 ADD A_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADD_r8_addrr8r8(GB, GB.CPU._r.A, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x87 ADD A_A
@@ -935,11 +961,7 @@ func ADC_0x8D_A_L(GB *GAMEBOY) {
 // 0x8E ADC A_addrHL
 func ADC_0x8E_A_addrHL(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0x8E ADC A_addrHL")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 2
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	GB.CPU._r.A = ADC_r8_addrr8r8(GB, GB.CPU._r.A, GB.CPU._r.H, GB.CPU._r.L)
 }
 
 // 0x8F ADC A_A
@@ -1445,21 +1467,13 @@ func JP_0xD2_NC_a16(GB *GAMEBOY) {
 // 0xD3 ILLEGAL_D3
 func ILLEGAL_D3_0xD3(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xD3 ILLEGAL_D3 ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xD4 CALL NC_a16
 func CALL_0xD4_NC_a16(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xD4 CALL NC_a16")
-	//NEEDS CODE - ADDR
-	GB.CPU._r.PC += 3
-	GB.CPU._r.M = 6 //[6, 3]
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xD5 PUSH DE
@@ -1521,11 +1535,7 @@ func JP_0xDA_C_a16(GB *GAMEBOY) {
 // 0xDB ILLEGAL_DB
 func ILLEGAL_DB_0xDB(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xDB ILLEGAL_DB ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xDC CALL C_a16
@@ -1541,11 +1551,7 @@ func CALL_0xDC_C_a16(GB *GAMEBOY) {
 // 0xDD ILLEGAL_DD
 func ILLEGAL_DD_0xDD(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xDD ILLEGAL_DD ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xDE SBC A_n8
@@ -1597,21 +1603,13 @@ func LDH_0xE2_addrC_A(GB *GAMEBOY) {
 // 0xE3 ILLEGAL_E3
 func ILLEGAL_E3_0xE3(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xE3 ILLEGAL_E3 ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xE4 ILLEGAL_E4
 func ILLEGAL_E4_0xE4(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xE4 ILLEGAL_E4 ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xE5 PUSH HL
@@ -1669,31 +1667,19 @@ func LD_0xEA_addra16_A(GB *GAMEBOY) {
 // 0xEB ILLEGAL_EB
 func ILLEGAL_EB_0xEB(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xEB ILLEGAL_EB ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xEC ILLEGAL_EC
 func ILLEGAL_EC_0xEC(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xEC ILLEGAL_EC ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xED ILLEGAL_ED
 func ILLEGAL_ED_0xED(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xED ILLEGAL_ED ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xEE XOR A_n8
@@ -1755,11 +1741,7 @@ func DI_0xF3(GB *GAMEBOY) {
 // 0xF4 ILLEGAL_F4
 func ILLEGAL_F4_0xF4(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xF4 ILLEGAL_F4 ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xF5 PUSH AF
@@ -1827,21 +1809,13 @@ func EI_0xFB(GB *GAMEBOY) {
 // 0xFC ILLEGAL_FC
 func ILLEGAL_FC_0xFC(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xFC ILLEGAL_FC ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xFD ILLEGAL_FD
 func ILLEGAL_FD_0xFD(GB *GAMEBOY) {
 	GB.InfoLogger.Println("0xFD ILLEGAL_FD ")
-	//ILLEGAL OPERATION
-	GB.CPU._r.PC += 1
-	GB.CPU._r.M = 1
-	GB.CPU._r.T = GB.CPU._r.M * 4
-	//FLAGS AFFECTED : {'Z': '-', 'N': '-', 'H': '-', 'C': '-'}
+	GB.ErrorLogger.Println("HIT ILLEGAL INSTRUCTION")
 }
 
 // 0xFE CP A_n8

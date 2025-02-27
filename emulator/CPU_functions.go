@@ -399,6 +399,31 @@ func ADD_r8r8_r16(GB *GAMEBOY, leftUpper uint8, leftLower uint8, right uint16) (
 	return SPLIT_16BITS_TO_8BITS(result)
 }
 
+//ADD value at addr to 8-bit register
+func ADD_r8_addrr8r8(GB *GAMEBOY, left uint8, rightUpper uint8, rightLower uint8) uint8 {
+	GB.InfoLogger.Println("ADD_r8_addrr8r8")
+
+	//Perform Operation
+	right := COMBINE_8BITS_TO_16BITS(rightUpper, rightLower)
+	rightValue := GB.MMU.readByte(GB, right)
+	result := left + rightValue
+
+	//Set Flags
+	SET_Z_FLAG_result8(GB, result)
+
+	SET_N_FLAG(GB, false)
+
+	SET_H_FLAG_8(GB, left, rightValue, true)
+
+	SET_C_FLAG_8(GB, left, rightValue, true)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
+
+	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	return result
+}
+
 //----- Additions Carry -----
 
 //
@@ -442,6 +467,31 @@ func ADC_r8_n8(GB *GAMEBOY, left uint8, right uint8) uint8 {
 
 	//Set PC & Timings
 	REG_CLOCK_TIMINGS(GB, 2, 2)
+
+	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
+	return result
+}
+
+//ADC value at addr to 8-bit register
+func ADC_r8_addrr8r8(GB *GAMEBOY, left uint8, rightUpper uint8, rightLower uint8) uint8 {
+	GB.InfoLogger.Println("ADC_r8_addrr8r8")
+
+	//Perform Operation
+	right := COMBINE_8BITS_TO_16BITS(rightUpper, rightLower)
+	rightValue := GB.MMU.readByte(GB, right)
+	result := left + rightValue + GET_C_FLAG(GB)
+
+	//Set Flags
+	SET_Z_FLAG_result8(GB, result)
+
+	SET_N_FLAG(GB, false)
+
+	SET_H_FLAG_8(GB, left, rightValue, true)
+
+	SET_C_FLAG_8(GB, left, rightValue, true)
+
+	//Set PC & Timings
+	REG_CLOCK_TIMINGS(GB, 1, 2)
 
 	//FLAGS AFFECTED : {'Z': 'Z', 'N': '0', 'H': 'H', 'C': 'C'}
 	return result

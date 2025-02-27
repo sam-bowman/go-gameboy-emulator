@@ -547,6 +547,9 @@ type CPU struct {
 	_r REGISTER
 	_c CLOCK
 
+	stop bool
+	halt bool
+
 	reset func(GB *GAMEBOY)
 	exec  func(GB *GAMEBOY)
 
@@ -564,6 +567,10 @@ func exec(GB *GAMEBOY) {
 }
 
 func reset(GB *GAMEBOY) {
+	// Reset STOP/HALT
+	GB.CPU.stop = false
+	GB.CPU.halt = false
+
 	// Reset Registers
 	GB.CPU._r.A = 0
 	GB.CPU._r.B = 0
@@ -613,6 +620,9 @@ func newCPU() *CPU {
 		M: 0,
 		T: 0,
 	}
+
+	CPU.stop = false
+	CPU.halt = false
 
 	CPU.reset = reset
 	CPU.exec = exec
